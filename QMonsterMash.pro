@@ -47,5 +47,6 @@ DEFINES +=  "BusCouplerAlias=0" \
             "DigOutPos=2"
 
 OTHER_FILES += \
-    README.txt
+    README \
+    LICENSE
 
