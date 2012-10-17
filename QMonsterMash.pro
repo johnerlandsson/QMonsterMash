@@ -46,3 +46,6 @@ DEFINES +=  "BusCouplerAlias=0" \
             "AnaInPos=1" \
             "DigOutAlias=0" \
             "DigOutPos=2"
+
+OTHER_FILES += \
+    README.txt
