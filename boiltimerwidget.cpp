@@ -12,8 +12,6 @@ BoilTimerWidget::BoilTimerWidget(QWidget *parent) :
     ui->setupUi(this);
     running = false;
 
-
-
     //Set up the tablemodel
     tblAdditionsModel = new QStandardItemModel( 5, 2 );
 

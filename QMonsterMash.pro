@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2012-10-17T02:02:33
+# Project created by John Erlandsson 2012-10-17T02:02:33
 #
 #-------------------------------------------------
 
@@ -30,10 +30,9 @@ FORMS    += qmonstermash.ui \
             hydrometercorrectionwidget.ui \
             boiltimerwidget.ui
 
-LIBS +=     -lethercat \
-            -lkdeui \
-
-LIBS +=     -L/usr/lib/kde4/devel/ \
+unix:!macx:!symbian: LIBS +=    -lethercat \
+                                -lkdeui \
+                                -L/usr/lib/kde4/devel/
 
 INCLUDEPATH +=  /usr/include/kde4/
 
@@ -49,3 +48,4 @@ DEFINES +=  "BusCouplerAlias=0" \
 
 OTHER_FILES += \
     README.txt
+
