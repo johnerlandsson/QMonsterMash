@@ -1,0 +1,224 @@
+#include "qmonstermash.h"
+#include "ui_qmonstermash.h"
+#include <QDebug>
+#include "hydrometercorrectionwidget.h"
+#include "boiltimerwidget.h"
+
+QMonsterMash::QMonsterMash(QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::QMonsterMash)
+{
+    ui->setupUi(this);
+
+    //Start EtherCAT thread
+    ec = new IoThread;
+    ec->start( QThread::HighestPriority );
+    ec->setDigitalOutput0( false );
+    ec->setDigitalOutput1( false );
+
+    //Set up the mash schedule widget. (Create in constructor and leave alive so settings doesent change)
+    msv = new MashScheduleWidget;
+    mashSchedule = msv->getMashEntries();
+    mashSchedule = msv->getMashEntries();
+
+    //Se up timer to update gui
+    tmrUpdateGUI = new QTimer;
+    connect( tmrUpdateGUI, SIGNAL( timeout() ), this, SLOT( updateLblPv() ) );
+    connect( tmrUpdateGUI, SIGNAL( timeout() ), this, SLOT( updateLblSv() ) );
+    tmrUpdateGUI->start( 200 );
+
+    //Set up the plot widget
+    ui->kpPV->setLimits( 0, 10, 0, 80 );
+    ui->kpPV->setAntialiasing( true );
+    kpoPV = new KPlotObject( Qt::green, KPlotObject::Lines, 1 );
+    ui->kpPV->addPlotObject( kpoPV );
+
+    //Set up the minute timer that tics the plot widget and switches mash entries
+    minutes = 0;
+    tmrMinute = new QTimer;
+    connect( tmrMinute, SIGNAL( timeout() ), this, SLOT( incrementMinutes() ) );
+    tmrMinute->start( 60000 );
+
+    //Set up pulse with modulation for output 0
+    pwm = new PWMThread;
+    pwm->setCycleTime( 1000 );
+    connect( pwm, SIGNAL( statusChanged( bool ) ), ec, SLOT( setDigitalOutput0( bool ) ) );
+
+    //Set up other variables
+    mashRunning = false;
+    pumpRunning = false;
+}
+
+QMonsterMash::~QMonsterMash()
+{
+    //Stop thread before destroying
+    ec->stop();
+    ec->wait();
+    delete ui;
+}
+
+void QMonsterMash::on_actExit_triggered()
+{
+    exit( EXIT_SUCCESS );
+}
+
+//Update the lable that holds the process value
+void QMonsterMash::updateLblPv()
+{
+    QString anin = QString::number( ec->getAnalogInput1(), 'f', 1 ) + QString::fromUtf8( "\u00B0" );
+    ui->lblPv->setText( anin );
+}
+
+//Update the lable that holds the set value
+void QMonsterMash::updateLblSv()
+{
+    if( mashSchedule != NULL )
+        ui->lblSv->setText( QString::number( mashSchedule->temp, 'f', 1 ) );
+}
+
+//This is the slot for minute timer. It tics the plot widget and switches between mash entries
+void QMonsterMash::incrementMinutes()
+{
+    static unsigned int timestamp = 0;
+    static unsigned int minutesAtSv = 0;
+    static bool flagSet = false;
+    if( minutes == 0 )
+    {
+        timestamp = 0;
+        minutesAtSv = 0;
+        flagSet = false;
+    }
+
+    //Make shure that start mashing has been pressed
+    if( !mashRunning )
+        return;
+
+    //Make sure that the mashschedule linked list is valid
+    if( mashSchedule == NULL )
+        throw "Bad pointer from MashScheduleWidget";
+
+
+    //Only count the minutes when pv>=sv
+    if( ec->getAnalogInput1() >= mashSchedule->temp )
+        minutesAtSv++;
+
+    minutes++;
+
+    //Expand the x axis of the plot
+    if( minutes > 10 )
+        ui->kpPV->setLimits( 0, minutes, 0, 80 );
+
+    //Set a flag on the first point of every rest
+    if( !flagSet && ec->getAnalogInput1() >= mashSchedule->temp )
+    {
+        flagSet = true;
+        kpoPV->addPoint( minutes, ec->getAnalogInput1(), QString( "%1" ).arg( mashSchedule->name ), 1 );
+    }
+    else
+    {
+        kpoPV->addPoint( minutes, ec->getAnalogInput1() );
+    }
+    ui->kpPV->update();
+
+    //Stop switching mash entries when at the last object of the mash schedule linked list
+    if( mashSchedule->next == NULL )
+        return;
+    else if( minutes >= (mashSchedule->time + timestamp) ) //This part switches mash entries
+    {
+        timestamp = minutes;
+        flagSet = false;
+
+        MashScheduleWidget::mashEntry_t *tmp = mashSchedule->next;
+        delete mashSchedule;
+        mashSchedule = tmp;
+    }
+}
+
+//Tools->Boil timer pressed
+void QMonsterMash::on_actBoilTimer_triggered()
+{
+    BoilTimerWidget *btw = new BoilTimerWidget;
+    btw->show();
+}
+
+//File->Mash Schedule pressed
+void QMonsterMash::on_actMashSchedule_triggered()
+{
+    msv->show();
+}
+
+//Start mash button pressed
+void QMonsterMash::on_buttStart_clicked()
+{
+    mashRunning = true;
+    minutes = 0;
+
+    //Reset gui
+    ui->buttStart->setEnabled( false );
+    ui->buttStop->setEnabled( true );
+    ui->actMashSchedule->setEnabled( false );
+
+    //Reload the linked list with mash schedule
+    mashSchedule = msv->getMashEntries();
+
+    //Reset the plot widget
+    ui->kpPV->setLimits( 0, 10, 0, 80 );
+    kpoPV->clearPoints();
+    ui->kpPV->update();
+    kpoPV->addPoint( 0, ec->getAnalogInput1() );
+
+    //Start pulse with modulation
+    pwm->start( QThread::HighPriority );
+
+    //TODO remove this
+    pwm->setValue( 50.0f );
+}
+
+//Stop mash button pressed
+void QMonsterMash::on_buttStop_clicked()
+{
+    mashRunning = false;
+
+    //Reset gui
+    ui->buttStart->setEnabled( true );
+    ui->buttStop->setEnabled( false );
+    ui->actMashSchedule->setEnabled( true );
+
+    //Stop pulse with modulation
+    pwm->stop();
+    pwm->wait();
+}
+
+//Tools->Hydrometer Correction pressed
+void QMonsterMash::on_actHydrometerCorrection_triggered()
+{
+    //Destroy object after each use. No need to keep settings
+    HydrometerCorrectionWidget *hcw = new HydrometerCorrectionWidget;
+    hcw->show();
+}
+
+//Start pump button pressed
+void QMonsterMash::on_buttStartPump_clicked()
+{
+    pumpRunning = true;
+    ec->setDigitalOutput1( true );
+
+    //Reset gui
+    ui->buttStart->setEnabled( true );
+    ui->buttStartPump->setEnabled( false );
+    ui->buttStopPump->setEnabled( true );
+}
+
+//Stop pump button pressed
+void QMonsterMash::on_buttStopPump_clicked()
+{
+    pumpRunning = false;
+    mashRunning = false; //Mash not allowed to be on when pump is off
+    ec->setDigitalOutput1( false );
+    ui->buttStart->setEnabled( false );
+    ui->buttStop->setEnabled( false );
+    ui->buttStartPump->setEnabled( true );
+
+    pwm->stop();
+    pwm->wait();
+}
