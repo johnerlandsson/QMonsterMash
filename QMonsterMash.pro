@@ -40,7 +40,8 @@ RESOURCES +=    resource.qrc
 
 OTHER_FILES += \
     README \
-    LICENSE
+    LICENSE \
+    sounds/air-raid-siren-alert.mp3
 
 target.path = /opt/QMonsterMash
 INSTALLS += target
