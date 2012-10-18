@@ -45,8 +45,9 @@ QMonsterMash::QMonsterMash(QWidget *parent) :
     tmrUpdateGUI->start( 200 );
 
     //Set up the plot widget
-    ui->kpPV->setLimits( 0, 10, 0, 80 );
+    ui->kpPV->setLimits( 0, PLOT_MAX_X, 0, PLOT_MAX_Y );
     ui->kpPV->setAntialiasing( true );
+
     kpoPV = new KPlotObject( Qt::green, KPlotObject::Lines, 1 );
     ui->kpPV->addPlotObject( kpoPV );
 
@@ -74,6 +75,7 @@ QMonsterMash::~QMonsterMash()
     delete ui;
 }
 
+//File->Exit pressed
 void QMonsterMash::on_actExit_triggered()
 {
     exit( EXIT_SUCCESS );
@@ -90,18 +92,16 @@ void QMonsterMash::updateLblPv()
 void QMonsterMash::updateLblSv()
 {
     if( mashSchedule != NULL )
-        ui->lblSv->setText( QString::number( mashSchedule->temp, 'f', 1 ) );
+        ui->lblSv->setText( QString::number( mashSchedule->temp, 'f', 1 ) + QString::fromUtf8( "\u00B0" ) );
 }
 
 //This is the slot for minute timer. It tics the plot widget and switches between mash entries
 void QMonsterMash::incrementMinutes()
 {
-    static unsigned int timestamp = 0;
-    static unsigned int minutesAtSv = 0;
+    static int minutesAtSv = 0;
     static bool flagSet = false;
     if( minutes == 0 )
     {
-        timestamp = 0;
         minutesAtSv = 0;
         flagSet = false;
     }
@@ -123,7 +123,7 @@ void QMonsterMash::incrementMinutes()
 
     //Expand the x axis of the plot
     if( minutes > 10 )
-        ui->kpPV->setLimits( 0, minutes, 0, 80 );
+        ui->kpPV->setLimits( 0, minutes, 0, PLOT_MAX_Y );
 
     //Set a flag on the first point of every rest
     if( !flagSet && ec->getAnalogInput1() >= mashSchedule->temp )
@@ -137,12 +137,13 @@ void QMonsterMash::incrementMinutes()
     }
     ui->kpPV->update();
 
+    qDebug() << minutes << " " << minutesAtSv;
     //Stop switching mash entries when at the last object of the mash schedule linked list
     if( mashSchedule->next == NULL )
         return;
-    else if( minutes >= (mashSchedule->time + timestamp) ) //This part switches mash entries
+    else if( minutesAtSv >= mashSchedule->time ) //This part switches mash entries
     {
-        timestamp = minutes;
+        minutesAtSv = 0;
         flagSet = false;
 
         MashScheduleWidget::mashEntry_t *tmp = mashSchedule->next;

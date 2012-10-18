@@ -18,7 +18,7 @@
 #include "iothread.h"
 #include <QDebug>
 
-IoThread::IoThread(QObject *parent)
+IoThread::IoThread( QObject */*parent*/ )
 {
     /* Process data */
 

@@ -38,6 +38,13 @@ INCLUDEPATH +=  /usr/include/kde4/
 
 RESOURCES +=    resource.qrc
 
+OTHER_FILES += \
+    README \
+    LICENSE
+
+target.path = /opt/QMonsterMash
+INSTALLS += target
+
 #Edit these values to suite your system
 DEFINES +=  "BusCouplerAlias=0" \
             "BusCouplerPos=0" \
@@ -45,8 +52,3 @@ DEFINES +=  "BusCouplerAlias=0" \
             "AnaInPos=1" \
             "DigOutAlias=0" \
             "DigOutPos=2"
-
-OTHER_FILES += \
-    README \
-    LICENSE
-

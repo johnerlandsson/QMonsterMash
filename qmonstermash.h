@@ -25,6 +25,9 @@
 #include "mashschedulewidget.h"
 #include "pwmthread.h"
 
+#define PLOT_MAX_Y 100
+#define PLOT_MAX_X 10
+
 namespace Ui {
     class QMonsterMash;
 }
