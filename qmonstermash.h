@@ -24,6 +24,7 @@
 #include <kplotobject.h>
 #include "mashschedulewidget.h"
 #include "pwmthread.h"
+#include "regulator.h"
 
 #define PLOT_MAX_Y 100
 #define PLOT_MAX_X 10
@@ -59,6 +60,7 @@ class QMonsterMash : public QMainWindow
         MashScheduleWidget::mashEntry_t *mashSchedule;
 
         PWMThread *pwm;
+        Regulator *reg;
 
     private slots:
         void updateLblPv();

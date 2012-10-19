@@ -61,6 +61,8 @@ QMonsterMash::QMonsterMash(QWidget *parent) :
     pwm = new PWMThread;
     pwm->setCycleTime( 1000 );
     connect( pwm, SIGNAL( statusChanged( bool ) ), ec, SLOT( setDigitalOutput0( bool ) ) );
+    reg = new Regulator( 0, 1, 0.2, 1000 );
+    connect( reg, SIGNAL( outputChanged( double ) ), pwm, SLOT( setValue( double ) ) );
 
     //Set up other variables
     mashRunning = false;
@@ -188,14 +190,16 @@ void QMonsterMash::on_buttStart_clicked()
     //Start pulse with modulation
     pwm->start( QThread::HighPriority );
 
-    //TODO remove this
-    pwm->setValue( 50.0f );
+    //Start regulator
+    reg->start();
 }
 
 //Stop mash button pressed
 void QMonsterMash::on_buttStop_clicked()
 {
     mashRunning = false;
+
+    ec->setDigitalOutput1( false );
 
     //Reset gui
     ui->buttStart->setEnabled( true );
@@ -205,6 +209,9 @@ void QMonsterMash::on_buttStop_clicked()
     //Stop pulse with modulation
     pwm->stop();
     pwm->wait();
+
+    //stop regulator
+    reg->stop();
 }
 
 //Tools->Hydrometer Correction pressed
@@ -231,12 +238,6 @@ void QMonsterMash::on_buttStartPump_clicked()
 void QMonsterMash::on_buttStopPump_clicked()
 {
     pumpRunning = false;
-    mashRunning = false; //Mash not allowed to be on when pump is off
-    ec->setDigitalOutput1( false );
-    ui->buttStart->setEnabled( false );
-    ui->buttStop->setEnabled( false );
-    ui->buttStartPump->setEnabled( true );
 
-    pwm->stop();
-    pwm->wait();
+    on_buttStop_clicked();
 }

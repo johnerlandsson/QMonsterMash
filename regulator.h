@@ -15,36 +15,36 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef PWMTHREAD_H
-#define PWMTHREAD_H
+#ifndef REGULATOR_H
+#define REGULATOR_H
 
-#include <QThread>
-#include <QMutex>
-#include "iothread.h"
+#include <QObject>
+#include <QTimer>
 
-class PWMThread : public QThread
+class Regulator : public QObject
 {
-    Q_OBJECT
-
+        Q_OBJECT
     public:
-        PWMThread( QObject *parent = 0 );
-        void run();
+        explicit Regulator( QObject *parent = 0, double kP = 1, double I = 0.2, unsigned int cycleTimeMs = 1000 );
+        void start();
         void stop();
-        void setCycleTime( unsigned int newCycleTime );
-
-    public slots:
-        void setValue( double newValue );
-
-    signals:
-        void statusChanged( bool newStatus );
 
     private:
+        QTimer *cycleTimer;
+        double output;
+        double IState;
+        double ProportionalGain;
+        double Integral;
+        double IntegralState;
         unsigned int cycleTime;
-        bool running;
-        QMutex mutex;
-        double value;
-        IoThread *ec;
-
+        double sv, pv;
+        
+    signals:
+        void outputChanged( double newValue );
+        
+    public slots:
+        void updatePI();
+        
 };
 
-#endif // PWMTHREAD_H
+#endif // REGULATOR_H

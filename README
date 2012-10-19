@@ -9,6 +9,10 @@ Requirements:
     1 Beckhoff EL3202 - Analog input (PT100)
     1 Beckhoff EL2004 - Digital inputs
 
+Dependencies:
+    libethercat.so
+    libkdeui.so
+
 Electrical connection:
     PT100 temperatur sensor - Connect to EL3202 first input
     Heating element via solidstate relay - Connect to EL2004 output1
