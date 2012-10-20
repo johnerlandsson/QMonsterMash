@@ -65,6 +65,7 @@ class QMonsterMash : public QMainWindow
     private slots:
         void updateLblPv();
         void updateLblSv();
+        void updateLblOutput();
         void incrementMinutes();
         void on_actExit_triggered();
         void on_actBoilTimer_triggered();
@@ -74,6 +75,7 @@ class QMonsterMash : public QMainWindow
         void on_actHydrometerCorrection_triggered();
         void on_buttStartPump_clicked();
         void on_buttStopPump_clicked();
+        void on_actRegSettings_triggered();
 };
 
 #endif // QMONSTERMASH_H

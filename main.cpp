@@ -23,9 +23,11 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     QMonsterMash w;
 
-    QApplication::setApplicationName( "QMonsterMash" );
+    QCoreApplication::setApplicationName( "QMonsterMash" );
+    QCoreApplication::setOrganizationDomain( "www.lunatech.se" );
+    QCoreApplication::setOrganizationName( "Lunatech Innovations" );
 
-    w.show();
+    w.showMaximized();
     
     return a.exec();
 }

@@ -28,6 +28,7 @@ class Regulator : public QObject
         explicit Regulator( QObject *parent = 0, double kP = 1, double I = 0.2, unsigned int cycleTimeMs = 1000 );
         void start();
         void stop();
+        double getOutput();
 
     private:
         QTimer *cycleTimer;
@@ -44,6 +45,8 @@ class Regulator : public QObject
         
     public slots:
         void updatePI();
+        void setSv( double newValue );
+        void setPv( double newValue );
         
 };
 

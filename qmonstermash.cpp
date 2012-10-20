@@ -20,6 +20,7 @@
 #include <QDebug>
 #include "hydrometercorrectionwidget.h"
 #include "boiltimerwidget.h"
+#include "regulatorsettings.h"
 
 QMonsterMash::QMonsterMash(QWidget *parent) :
     QMainWindow(parent),
@@ -42,6 +43,7 @@ QMonsterMash::QMonsterMash(QWidget *parent) :
     tmrUpdateGUI = new QTimer;
     connect( tmrUpdateGUI, SIGNAL( timeout() ), this, SLOT( updateLblPv() ) );
     connect( tmrUpdateGUI, SIGNAL( timeout() ), this, SLOT( updateLblSv() ) );
+    connect( tmrUpdateGUI, SIGNAL( timeout() ), this, SLOT( updateLblOutput() ) );
     tmrUpdateGUI->start( 200 );
 
     //Set up the plot widget
@@ -61,7 +63,7 @@ QMonsterMash::QMonsterMash(QWidget *parent) :
     pwm = new PWMThread;
     pwm->setCycleTime( 1000 );
     connect( pwm, SIGNAL( statusChanged( bool ) ), ec, SLOT( setDigitalOutput0( bool ) ) );
-    reg = new Regulator( 0, 1, 0.2, 1000 );
+    reg = new Regulator( 0, 10, 0.1, 1000 );
     connect( reg, SIGNAL( outputChanged( double ) ), pwm, SLOT( setValue( double ) ) );
 
     //Set up other variables
@@ -88,6 +90,8 @@ void QMonsterMash::updateLblPv()
 {
     QString anin = QString::number( ec->getAnalogInput1(), 'f', 1 ) + QString::fromUtf8( "\u00B0" );
     ui->lblPv->setText( anin );
+
+    reg->setPv( ec->getAnalogInput1() );
 }
 
 //Update the lable that holds the set value
@@ -97,6 +101,12 @@ void QMonsterMash::updateLblSv()
         ui->lblSv->setText( QString::number( mashSchedule->temp, 'f', 1 ) + QString::fromUtf8( "\u00B0" ) );
 }
 
+//Update tha label that holds the regulator output
+void QMonsterMash::updateLblOutput()
+{
+        ui->lblOutput->setText( QString::number( reg->getOutput(), 'f', 1 ) + "%" );
+}
+
 //This is the slot for minute timer. It tics the plot widget and switches between mash entries
 void QMonsterMash::incrementMinutes()
 {
@@ -104,6 +114,7 @@ void QMonsterMash::incrementMinutes()
     static bool flagSet = false;
     if( minutes == 0 )
     {
+        reg->setSv( mashSchedule->temp );
         minutesAtSv = 0;
         flagSet = false;
     }
@@ -139,7 +150,6 @@ void QMonsterMash::incrementMinutes()
     }
     ui->kpPV->update();
 
-    qDebug() << minutes << " " << minutesAtSv;
     //Stop switching mash entries when at the last object of the mash schedule linked list
     if( mashSchedule->next == NULL )
         return;
@@ -151,6 +161,8 @@ void QMonsterMash::incrementMinutes()
         MashScheduleWidget::mashEntry_t *tmp = mashSchedule->next;
         delete mashSchedule;
         mashSchedule = tmp;
+
+        reg->setSv( mashSchedule->temp );
     }
 }
 
@@ -177,9 +189,11 @@ void QMonsterMash::on_buttStart_clicked()
     ui->buttStart->setEnabled( false );
     ui->buttStop->setEnabled( true );
     ui->actMashSchedule->setEnabled( false );
+    ui->actRegSettings->setEnabled( false );
 
     //Reload the linked list with mash schedule
     mashSchedule = msv->getMashEntries();
+    reg->setSv( mashSchedule->temp );
 
     //Reset the plot widget
     ui->kpPV->setLimits( 0, 10, 0, 80 );
@@ -205,6 +219,7 @@ void QMonsterMash::on_buttStop_clicked()
     ui->buttStart->setEnabled( true );
     ui->buttStop->setEnabled( false );
     ui->actMashSchedule->setEnabled( true );
+    ui->actRegSettings->setEnabled( true );
 
     //Stop pulse with modulation
     pwm->stop();
@@ -238,6 +253,15 @@ void QMonsterMash::on_buttStartPump_clicked()
 void QMonsterMash::on_buttStopPump_clicked()
 {
     pumpRunning = false;
+    ui->buttStartPump->setEnabled( true );
+    ui->buttStopPump->setEnabled( false );
 
     on_buttStop_clicked();
+}
+
+//Edit->Regulator settings pressed
+void QMonsterMash::on_actRegSettings_triggered()
+{
+    RegulatorSettings *regSettings = new RegulatorSettings;
+    regSettings->show();
 }

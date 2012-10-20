@@ -28,7 +28,8 @@ SOURCES +=  main.cpp\
             iothread.cpp \
             hydrometercorrectionwidget.cpp \
             boiltimerwidget.cpp \
-    regulator.cpp
+    regulator.cpp \
+    regulatorsettings.cpp
 
 HEADERS  += qmonstermash.h \
             pwmthread.h \
@@ -36,12 +37,14 @@ HEADERS  += qmonstermash.h \
             iothread.h \
             hydrometercorrectionwidget.h \
             boiltimerwidget.h \
-            regulator.h
+            regulator.h \
+    regulatorsettings.h
 
 FORMS    += qmonstermash.ui \
             mashschedulewidget.ui \
             hydrometercorrectionwidget.ui \
-            boiltimerwidget.ui
+            boiltimerwidget.ui \
+    regulatorsettings.ui
 
 unix:!macx:!symbian: LIBS +=    -lethercat \
                                 -lkdeui \
@@ -67,3 +70,6 @@ DEFINES +=  "BusCouplerAlias=0" \
             "AnaInPos=1" \
             "DigOutAlias=0" \
             "DigOutPos=2"
+
+
+

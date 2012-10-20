@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>808</width>
-    <height>619</height>
+    <width>1104</width>
+    <height>550</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -158,7 +158,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer_4">
+         <spacer name="horizontalSpacer_3">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -169,6 +169,30 @@
            </size>
           </property>
          </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_3">
+          <property name="font">
+           <font>
+            <pointsize>20</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Output:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="lblOutput">
+          <property name="font">
+           <font>
+            <pointsize>20</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>0.0</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -184,8 +208,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>808</width>
-     <height>21</height>
+     <width>1104</width>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -203,7 +227,14 @@
     <addaction name="actBoilTimer"/>
     <addaction name="actHydrometerCorrection"/>
    </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actRegSettings"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
    <addaction name="menuTools"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -235,6 +266,11 @@
     <string>Hydrometer correction</string>
    </property>
   </action>
+  <action name="actRegSettings">
+   <property name="text">
+    <string>Regulator settings</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -242,6 +278,7 @@
    <class>KPlotWidget</class>
    <extends>QFrame</extends>
    <header>kplotwidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
