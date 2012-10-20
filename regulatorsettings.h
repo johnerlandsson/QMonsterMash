@@ -2,6 +2,7 @@
 #define REGULATORSETTINGS_H
 
 #include <QWidget>
+#include <QSettings>
 
 namespace Ui {
     class RegulatorSettings;
@@ -9,17 +10,29 @@ namespace Ui {
 
 class RegulatorSettings : public QWidget
 {
-    Q_OBJECT
+        Q_OBJECT
 
 public:
-    explicit RegulatorSettings(QWidget *parent = 0);
-    ~RegulatorSettings();
+        typedef struct
+        {
+                double I;
+                double P;
+                double Imax;
+                double Imin;
+                int cycleTime;
+        }reg_para_t;
+
+        reg_para_t getParameters();
+
+        explicit RegulatorSettings( QWidget *parent = 0 );
+        ~RegulatorSettings();
 
 private slots:
-    void on_buttSave_clicked();
+        void on_buttSave_clicked();
 
 private:
-    Ui::RegulatorSettings *ui;
+        Ui::RegulatorSettings *ui;
+        QSettings settings;
 };
 
 #endif // REGULATORSETTINGS_H

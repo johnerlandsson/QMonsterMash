@@ -1,7 +1,7 @@
 #include "regulatorsettings.h"
 #include "ui_regulatorsettings.h"
 #include <QMessageBox>
-#include <QSettings>
+#include <QDebug>
 
 RegulatorSettings::RegulatorSettings(QWidget *parent) :
     QWidget(parent),
@@ -9,12 +9,14 @@ RegulatorSettings::RegulatorSettings(QWidget *parent) :
 {
         ui->setupUi(this);
 
-        QSettings settings;
-
-        ui->dspnKp->setValue( settings.value( "QMonsterMash/kP" ).toDouble() );
-        ui->dspnI->setValue( settings.value( "QMonsterMash/I" ).toDouble() );
-        ui->dspnIMax->setValue( settings.value( "QMonsterMash/IMax" ).toDouble() );
-        ui->dspnIMin->setValue( settings.value( "QMonsterMash/IMin" ).toDouble() );
+        settings.beginGroup( "QMonsterMash" );
+        ui->dspnKp->setValue( settings.value( "kP" ).toDouble() );
+        ui->dspnI->setValue( settings.value( "I" ).toDouble() );
+        ui->dspnIMax->setValue( settings.value( "IMax" ).toDouble() );
+        ui->dspnIMin->setValue( settings.value( "IMin" ).toDouble() );
+        ui->spnCycleTime->setValue( settings.value( "cycleTime" ).toInt() );
+        settings.endGroup();
+        qDebug() << ui->spnCycleTime->value();
 }
 
 RegulatorSettings::~RegulatorSettings()
@@ -31,12 +33,28 @@ void RegulatorSettings::on_buttSave_clicked()
                 return;
         }
 
-        QSettings settings;
+        settings.beginGroup( "QMonsterMash" );
+        settings.setValue( "kP", ui->dspnKp->value() );
+        settings.setValue( "I", ui->dspnI->value() );
+        settings.setValue( "IMax", ui->dspnIMax->value() );
+        settings.setValue( "IMin", ui->dspnIMin->value() );
+        settings.setValue( "cycleTime", ui->spnCycleTime->value() );
+        settings.endGroup();
 
-        settings.setValue( "QMonsterMash/kP", ui->dspnKp->value() );
-        settings.setValue( "QMonsterMash/I", ui->dspnI->value() );
-        settings.setValue( "QMonsterMash/IMax", ui->dspnIMax->value() );
-        settings.setValue( "QMonsterMash/IMin", ui->dspnIMin->value() );
+        qDebug() << ui->dspnKp->value();
+        qDebug() << settings.value( "QMonsterMash/kP" );
 
         QMessageBox::information( this, "Done", "Regulator settings saved..." );
+}
+
+RegulatorSettings::reg_para_t RegulatorSettings::getParameters()
+{
+        reg_para_t ret;
+        ret.cycleTime = ui->spnCycleTime->value();
+        ret.I = ui->dspnI->value();
+        ret.P = ui->dspnKp->value();
+        ret.Imax = ui->dspnIMax->value();
+        ret.Imin = ui->dspnIMin->value();
+
+        return ret;
 }

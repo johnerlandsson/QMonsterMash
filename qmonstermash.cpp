@@ -20,7 +20,6 @@
 #include <QDebug>
 #include "hydrometercorrectionwidget.h"
 #include "boiltimerwidget.h"
-#include "regulatorsettings.h"
 
 QMonsterMash::QMonsterMash(QWidget *parent) :
     QMainWindow(parent),
@@ -63,7 +62,11 @@ QMonsterMash::QMonsterMash(QWidget *parent) :
     pwm = new PWMThread;
     pwm->setCycleTime( 1000 );
     connect( pwm, SIGNAL( statusChanged( bool ) ), ec, SLOT( setDigitalOutput0( bool ) ) );
-    reg = new Regulator( 0, 10, 0.1, 1000 );
+
+    //Set up regulator
+    regSettings = new RegulatorSettings;
+    RegulatorSettings::reg_para_t para = regSettings->getParameters();
+    reg = new Regulator( 0, para.P, para.I, para.cycleTime );
     connect( reg, SIGNAL( outputChanged( double ) ), pwm, SLOT( setValue( double ) ) );
 
     //Set up other variables
@@ -262,6 +265,5 @@ void QMonsterMash::on_buttStopPump_clicked()
 //Edit->Regulator settings pressed
 void QMonsterMash::on_actRegSettings_triggered()
 {
-    RegulatorSettings *regSettings = new RegulatorSettings;
-    regSettings->show();
+        regSettings->show();
 }

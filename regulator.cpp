@@ -24,25 +24,22 @@ Regulator::Regulator( QObject *parent, double kP, double I, unsigned int cycleTi
 {
     cycleTimer = new QTimer;
     connect( cycleTimer, SIGNAL( timeout() ), this, SLOT( updatePI() ) );
+    IState = 0;
 }
 
 void Regulator::updatePI()
 {
     double error = sv - pv;
-    qDebug() << "Error: " << sv << " - " << pv << " = " << error;
 
     double pTerm = error * ProportionalGain;
-    qDebug() << "pTerm: " << error << " * " << ProportionalGain << " = " << pTerm;
 
     IState += error;
     if( IState >= 100.0f )
         IState = 100.0f;
     else if( IState <= 0.0f )
         IState = 0.0f;
-    qDebug() << "iState: " << IState;
 
     double iTerm = Integral * IState;
-    qDebug() << "iTerm: " << Integral << " * " << IState << " = " << iTerm;
 
     output = pTerm + iTerm;
 
@@ -51,14 +48,12 @@ void Regulator::updatePI()
     else if( output < 0.0f )
         output = 0.0f;
     emit outputChanged( output );
-
-    qDebug() << "Output: " << pTerm << " + " << iTerm << " = " << output;
-    qDebug() << "";
 }
 
 void Regulator::start()
 {
     IntegralState = 0;
+    updatePI();
     cycleTimer->start( cycleTime );
 }
 
