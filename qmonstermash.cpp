@@ -58,9 +58,12 @@ QMonsterMash::QMonsterMash(QWidget *parent) :
     connect( tmrMinute, SIGNAL( timeout() ), this, SLOT( incrementMinutes() ) );
     tmrMinute->start( 60000 );
 
+    //Set up properties widget
+    prop = new Properties;
+
     //Set up pulse with modulation for output 0
     pwm = new PWMThread;
-    pwm->setCycleTime( 1000 );
+    pwm->setCycleTime( prop->getPWMCycleTime() );
     connect( pwm, SIGNAL( statusChanged( bool ) ), ec, SLOT( setDigitalOutput0( bool ) ) );
 
     //Set up regulator
@@ -188,6 +191,7 @@ void QMonsterMash::on_buttStart_clicked()
 {
     mashRunning = true;
     minutes = 0;
+    pwm->setCycleTime( prop->getPWMCycleTime() );
 
     //Reset gui
     ui->buttStart->setEnabled( false );
@@ -267,4 +271,10 @@ void QMonsterMash::on_buttStopPump_clicked()
 void QMonsterMash::on_actRegSettings_triggered()
 {
         regSettings->show();
+}
+
+//Edit->Properties pressed
+void QMonsterMash::on_actProperties_triggered()
+{
+    prop->show();
 }

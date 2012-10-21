@@ -209,7 +209,7 @@
      <x>0</x>
      <y>0</y>
      <width>1104</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -232,6 +232,7 @@
      <string>Edit</string>
     </property>
     <addaction name="actRegSettings"/>
+    <addaction name="actProperties"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -269,6 +270,11 @@
   <action name="actRegSettings">
    <property name="text">
     <string>Regulator settings</string>
+   </property>
+  </action>
+  <action name="actProperties">
+   <property name="text">
+    <string>Properties</string>
    </property>
   </action>
  </widget>

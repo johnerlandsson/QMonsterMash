@@ -17,7 +17,6 @@
 
 #include "boiltimerwidget.h"
 #include "ui_boiltimerwidget.h"
-#include <QDebug>
 #include <QMessageBox>
 #include <QFile>
 #include <phonon/MediaObject>
@@ -27,6 +26,7 @@ BoilTimerWidget::BoilTimerWidget(QWidget *parent) :
     ui(new Ui::BoilTimerWidget)
 {
     ui->setupUi(this);
+
     running = false;
 
     //Set up the tablemodel

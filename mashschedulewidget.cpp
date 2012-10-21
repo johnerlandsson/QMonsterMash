@@ -137,8 +137,6 @@ MashScheduleWidget::mashEntry_t *MashScheduleWidget::getMashEntries()
     strcpy( mashEntries->name, "Sparge" );
     mashEntries->next = NULL;
 
-
-
     mashEntries = head;
     return mashEntries;
 }

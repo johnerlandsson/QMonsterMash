@@ -29,7 +29,8 @@ SOURCES +=  main.cpp\
             hydrometercorrectionwidget.cpp \
             boiltimerwidget.cpp \
     regulator.cpp \
-    regulatorsettings.cpp
+    regulatorsettings.cpp \
+    properties.cpp
 
 HEADERS  += qmonstermash.h \
             pwmthread.h \
@@ -38,13 +39,15 @@ HEADERS  += qmonstermash.h \
             hydrometercorrectionwidget.h \
             boiltimerwidget.h \
             regulator.h \
-    regulatorsettings.h
+    regulatorsettings.h \
+    properties.h
 
 FORMS    += qmonstermash.ui \
             mashschedulewidget.ui \
             hydrometercorrectionwidget.ui \
             boiltimerwidget.ui \
-    regulatorsettings.ui
+    regulatorsettings.ui \
+    properties.ui
 
 unix:!macx:!symbian: LIBS +=    -lethercat \
                                 -lkdeui \

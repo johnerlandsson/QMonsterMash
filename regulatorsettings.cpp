@@ -18,7 +18,7 @@
 #include "regulatorsettings.h"
 #include "ui_regulatorsettings.h"
 #include <QMessageBox>
-#include <QDebug>
+
 
 RegulatorSettings::RegulatorSettings(QWidget *parent) :
     QWidget(parent),
@@ -44,6 +44,7 @@ RegulatorSettings::~RegulatorSettings()
 //Save button clicked
 void RegulatorSettings::on_buttSave_clicked()
 {
+        //Make sure that IMin is not greater than IMax
         if( ui->dspnIMax->value() < ui->dspnIMin->value() )
         {
                 QMessageBox::critical( this, "Error", "IMax has to be greater than IMin.\nSettings not saved" );

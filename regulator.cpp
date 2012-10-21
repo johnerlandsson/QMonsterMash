@@ -16,10 +16,9 @@
 */
 
 #include "regulator.h"
-#include <QDebug>
 
 
-Regulator::Regulator( QObject *parent )
+Regulator::Regulator( QObject */*parent*/ )
 {
     cycleTimer = new QTimer;
     connect( cycleTimer, SIGNAL( timeout() ), this, SLOT( updatePI() ) );
@@ -34,10 +33,11 @@ void Regulator::updatePI()
     double pTerm = error * ProportionalGain;
 
     IState += error;
-    if( IState >= 100.0f )
-        IState = 100.0f;
-    else if( IState <= 0.0f )
-        IState = 0.0f;
+
+    if( IState >= iMax )  //Make sure that IState stays in between IMin and IMax
+        IState = iMax;
+    else if( IState <= iMin )
+        IState = iMin;
 
     double iTerm = Integral * IState;
 
@@ -47,6 +47,8 @@ void Regulator::updatePI()
         output = 100.0f;
     else if( output < 0.0f )
         output = 0.0f;
+
+
     emit outputChanged( output );
 }
 
@@ -70,7 +72,7 @@ void Regulator::stop()
 //Save new set value
 void Regulator::setSv(double newValue)
 {
-        if( sv > newValue )
+        if( sv > newValue ) //Clear IState if Sv is lowered
                 IState = 0;
 
         sv = newValue;
