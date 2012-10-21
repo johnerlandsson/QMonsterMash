@@ -65,9 +65,10 @@ QMonsterMash::QMonsterMash(QWidget *parent) :
 
     //Set up regulator
     regSettings = new RegulatorSettings;
-    RegulatorSettings::reg_para_t para = regSettings->getParameters();
-    reg = new Regulator( 0, para.P, para.I, para.cycleTime );
+    reg = new Regulator;
+    reg->setParameters( regSettings->getParameters() );
     connect( reg, SIGNAL( outputChanged( double ) ), pwm, SLOT( setValue( double ) ) );
+    connect( regSettings, SIGNAL( parametersChanged( RegulatorSettings::reg_para_t ) ), reg, SLOT( setParameters( RegulatorSettings::reg_para_t ) ) );
 
     //Set up other variables
     mashRunning = false;

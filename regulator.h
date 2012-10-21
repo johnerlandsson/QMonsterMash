@@ -20,12 +20,13 @@
 
 #include <QObject>
 #include <QTimer>
+#include "regulatorsettings.h"
 
 class Regulator : public QObject
 {
         Q_OBJECT
     public:
-        explicit Regulator( QObject *parent = 0, double kP = 1, double I = 0.2, unsigned int cycleTimeMs = 1000 );
+        explicit Regulator( QObject *parent = 0 );
         void start();
         void stop();
         double getOutput();
@@ -38,7 +39,7 @@ class Regulator : public QObject
         double Integral;
         double IntegralState;
         unsigned int cycleTime;
-        double sv, pv;
+        double sv, pv, iMax, iMin;
         
     signals:
         void outputChanged( double newValue );
@@ -47,6 +48,7 @@ class Regulator : public QObject
         void updatePI();
         void setSv( double newValue );
         void setPv( double newValue );
+        void setParameters( RegulatorSettings::reg_para_t newPara );
         
 };
 

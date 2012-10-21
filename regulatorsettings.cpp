@@ -1,3 +1,20 @@
+/*  Copyright (C) 2012 John Erlandsson
+
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+
 #include "regulatorsettings.h"
 #include "ui_regulatorsettings.h"
 #include <QMessageBox>
@@ -9,6 +26,7 @@ RegulatorSettings::RegulatorSettings(QWidget *parent) :
 {
         ui->setupUi(this);
 
+        //Read settings from QSettings object and setup GUI
         settings.beginGroup( "QMonsterMash" );
         ui->dspnKp->setValue( settings.value( "kP" ).toDouble() );
         ui->dspnI->setValue( settings.value( "I" ).toDouble() );
@@ -16,7 +34,6 @@ RegulatorSettings::RegulatorSettings(QWidget *parent) :
         ui->dspnIMin->setValue( settings.value( "IMin" ).toDouble() );
         ui->spnCycleTime->setValue( settings.value( "cycleTime" ).toInt() );
         settings.endGroup();
-        qDebug() << ui->spnCycleTime->value();
 }
 
 RegulatorSettings::~RegulatorSettings()
@@ -33,20 +50,35 @@ void RegulatorSettings::on_buttSave_clicked()
                 return;
         }
 
+        //Values from GUI
+        double kp = ui->dspnKp->value();
+        double i = ui->dspnI->value();
+        double imax = ui->dspnIMax->value();
+        double imin = ui->dspnIMin->value();
+        int cycletime = ui->spnCycleTime->value();
+
+        //Save to QSettings object
         settings.beginGroup( "QMonsterMash" );
-        settings.setValue( "kP", ui->dspnKp->value() );
-        settings.setValue( "I", ui->dspnI->value() );
-        settings.setValue( "IMax", ui->dspnIMax->value() );
-        settings.setValue( "IMin", ui->dspnIMin->value() );
-        settings.setValue( "cycleTime", ui->spnCycleTime->value() );
+        settings.setValue( "kP", kp );
+        settings.setValue( "I", i );
+        settings.setValue( "IMax", imax );
+        settings.setValue( "IMin", imin );
+        settings.setValue( "cycleTime", cycletime );
         settings.endGroup();
 
-        qDebug() << ui->dspnKp->value();
-        qDebug() << settings.value( "QMonsterMash/kP" );
+        //Send new parameters as signal
+        reg_para_t para;
+        para.cycleTime = cycletime;
+        para.I = i;
+        para.P = kp;
+        para.Imax = imax;
+        para.Imin = imin;
 
+        emit parametersChanged( para );
         QMessageBox::information( this, "Done", "Regulator settings saved..." );
 }
 
+//Slot to return current settings.
 RegulatorSettings::reg_para_t RegulatorSettings::getParameters()
 {
         reg_para_t ret;

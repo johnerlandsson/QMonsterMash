@@ -19,14 +19,14 @@
 #include <QDebug>
 
 
-Regulator::Regulator( QObject *parent, double kP, double I, unsigned int cycleTimeMs ) :
-    QObject( parent ), ProportionalGain( kP ), Integral( I ), cycleTime( cycleTimeMs )
+Regulator::Regulator( QObject *parent )
 {
     cycleTimer = new QTimer;
     connect( cycleTimer, SIGNAL( timeout() ), this, SLOT( updatePI() ) );
     IState = 0;
 }
 
+//Main regulator function. Calculate output.
 void Regulator::updatePI()
 {
     double error = sv - pv;
@@ -50,6 +50,7 @@ void Regulator::updatePI()
     emit outputChanged( output );
 }
 
+//Start regulator
 void Regulator::start()
 {
     IntegralState = 0;
@@ -57,6 +58,7 @@ void Regulator::start()
     cycleTimer->start( cycleTime );
 }
 
+//Stop regulator
 void Regulator::stop()
 {
     cycleTimer->stop();
@@ -65,6 +67,7 @@ void Regulator::stop()
     emit outputChanged( 0.0f );
 }
 
+//Save new set value
 void Regulator::setSv(double newValue)
 {
         if( sv > newValue )
@@ -73,12 +76,24 @@ void Regulator::setSv(double newValue)
         sv = newValue;
 }
 
+//Save new processvalue
 void Regulator::setPv(double newValue)
 {
         pv = newValue;
 }
 
+//Return current outuput
 double Regulator::getOutput()
 {
         return output;
+}
+
+//Setup new parameters
+void Regulator::setParameters( RegulatorSettings::reg_para_t newPara )
+{
+        ProportionalGain = newPara.P;
+        Integral = newPara.I;
+        cycleTime = newPara.cycleTime;
+        iMax = newPara.Imax;
+        iMin = newPara.Imin;
 }
