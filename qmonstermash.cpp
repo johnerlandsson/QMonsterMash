@@ -20,6 +20,7 @@
 #include <QDebug>
 #include "hydrometercorrectionwidget.h"
 #include "boiltimerwidget.h"
+#include <iostream>
 
 QMonsterMash::QMonsterMash(QWidget *parent) :
     QMainWindow(parent),
@@ -141,6 +142,13 @@ void QMonsterMash::incrementMinutes()
 
     minutes++;
 
+    //Output plot data
+    if( prop->getPlot() )
+    {
+        QString plotData = QString( "%1,%2" ).arg( minutes ).arg( ec->getAnalogInput1() );
+        std::cout << plotData.toStdString() << std::endl;
+    }
+
     //Expand the x axis of the plot
     if( minutes > 10 )
         ui->kpPV->setLimits( 0, minutes, 0, PLOT_MAX_Y );
@@ -208,6 +216,13 @@ void QMonsterMash::on_buttStart_clicked()
     kpoPV->clearPoints();
     ui->kpPV->update();
     kpoPV->addPoint( 0, ec->getAnalogInput1() );
+
+    //Output plot data
+    if( prop->getPlot() )
+    {
+        QString plotData = QString( "0,%1" ).arg( ec->getAnalogInput1() );
+        std::cout << plotData.toStdString() << std::endl;
+    }
 
     //Start pulse with modulation
     pwm->start( QThread::HighPriority );

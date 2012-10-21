@@ -51,7 +51,7 @@ IoThread::IoThread( QObject */*parent*/ )
     domainRegs[2].offset = NULL;
     domainRegs[2].bit_position = NULL;
 
-    qDebug() << "Configuring master...";
+    //qDebug() << "Configuring master...";
 
     ec_slave_config_t *sc;
 
@@ -86,7 +86,7 @@ IoThread::IoThread( QObject */*parent*/ )
     }
 
     //Activating master
-    qDebug() << "Activating master";
+    //qDebug() << "Activating master";
 
     if( ecrt_master_activate( master ) )
     {
