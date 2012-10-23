@@ -99,3 +99,10 @@ void PWMThread::setCycleTime(unsigned int newCycleTime)
     cycleTime = newCycleTime;
     mutex.unlock();
 }
+
+void PWMThread::startManual( double manValue )
+{
+    value = manValue;
+
+    start( QThread::HighPriority );
+}

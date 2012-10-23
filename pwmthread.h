@@ -29,11 +29,12 @@ class PWMThread : public QThread
     public:
         PWMThread( QObject *parent = 0 );
         void run();
-        void stop();
         void setCycleTime( unsigned int newCycleTime );
 
     public slots:
         void setValue( double newValue );
+        void startManual( double manValue );
+        void stop();
 
     signals:
         void statusChanged( bool newStatus );

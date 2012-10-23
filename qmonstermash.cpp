@@ -21,6 +21,7 @@
 #include "hydrometercorrectionwidget.h"
 #include "boiltimerwidget.h"
 #include <iostream>
+#include "plotdialog.h"
 
 QMonsterMash::QMonsterMash(QWidget *parent) :
     QMainWindow(parent),
@@ -273,5 +274,7 @@ void QMonsterMash::on_actRegSettings_triggered()
 //Tools->Plot step response
 void QMonsterMash::on_actPlotStepResponse_triggered()
 {
-
+    PlotDialog *pd = new PlotDialog;
+    connect( pd, SIGNAL( startManual( double ) ), pwm, SLOT( startManual( double ) ) );
+    connect( pd, SIGNAL( stopManual() ), pwm, SLOT( stop() ) );
 }
