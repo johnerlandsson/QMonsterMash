@@ -196,6 +196,7 @@ void QMonsterMash::on_buttStart_clicked()
     ui->buttStop->setEnabled( true );
     ui->actMashSchedule->setEnabled( false );
     ui->actRegSettings->setEnabled( false );
+    ui->actPlotStepResponse->setEnabled( false );
 
     //Reload the linked list with mash schedule
     mashSchedule = msv->getMashEntries();
@@ -226,6 +227,7 @@ void QMonsterMash::on_buttStop_clicked()
     ui->buttStop->setEnabled( false );
     ui->actMashSchedule->setEnabled( true );
     ui->actRegSettings->setEnabled( true );
+    ui->actPlotStepResponse->setEnabled( true );
 
     //Stop pulse with modulation
     pwm->stop();
@@ -274,7 +276,9 @@ void QMonsterMash::on_actRegSettings_triggered()
 //Tools->Plot step response
 void QMonsterMash::on_actPlotStepResponse_triggered()
 {
-    PlotDialog *pd = new PlotDialog;
+    PlotDialog *pd = new PlotDialog( 0, ec );
     connect( pd, SIGNAL( startManual( double ) ), pwm, SLOT( startManual( double ) ) );
     connect( pd, SIGNAL( stopManual() ), pwm, SLOT( stop() ) );
+
+    pd->show();
 }
