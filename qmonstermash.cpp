@@ -59,12 +59,8 @@ QMonsterMash::QMonsterMash(QWidget *parent) :
     connect( tmrMinute, SIGNAL( timeout() ), this, SLOT( incrementMinutes() ) );
     tmrMinute->start( 60000 );
 
-    //Set up properties widget
-    prop = new Properties;
-
     //Set up pulse with modulation for output 0
     pwm = new PWMThread;
-    pwm->setCycleTime( prop->getPWMCycleTime() );
     connect( pwm, SIGNAL( statusChanged( bool ) ), ec, SLOT( setDigitalOutput0( bool ) ) );
 
     //Set up regulator
@@ -73,6 +69,7 @@ QMonsterMash::QMonsterMash(QWidget *parent) :
     reg->setParameters( regSettings->getParameters() );
     connect( reg, SIGNAL( outputChanged( double ) ), pwm, SLOT( setValue( double ) ) );
     connect( regSettings, SIGNAL( parametersChanged( RegulatorSettings::reg_para_t ) ), reg, SLOT( setParameters( RegulatorSettings::reg_para_t ) ) );
+    pwm->setCycleTime( regSettings->getParameters().pwmCycleTime );
 
     //Set up other variables
     mashRunning = false;
@@ -142,13 +139,6 @@ void QMonsterMash::incrementMinutes()
 
     minutes++;
 
-    //Output plot data
-    if( prop->getPlot() )
-    {
-        QString plotData = QString( "%1,%2" ).arg( minutes ).arg( ec->getAnalogInput1() );
-        std::cout << plotData.toStdString() << std::endl;
-    }
-
     //Expand the x axis of the plot
     if( minutes > 10 )
         ui->kpPV->setLimits( 0, minutes, 0, PLOT_MAX_Y );
@@ -199,7 +189,6 @@ void QMonsterMash::on_buttStart_clicked()
 {
     mashRunning = true;
     minutes = 0;
-    pwm->setCycleTime( prop->getPWMCycleTime() );
 
     //Reset gui
     ui->buttStart->setEnabled( false );
@@ -216,13 +205,6 @@ void QMonsterMash::on_buttStart_clicked()
     kpoPV->clearPoints();
     ui->kpPV->update();
     kpoPV->addPoint( 0, ec->getAnalogInput1() );
-
-    //Output plot data
-    if( prop->getPlot() )
-    {
-        QString plotData = QString( "0,%1" ).arg( ec->getAnalogInput1() );
-        std::cout << plotData.toStdString() << std::endl;
-    }
 
     //Start pulse with modulation
     pwm->start( QThread::HighPriority );
@@ -288,8 +270,8 @@ void QMonsterMash::on_actRegSettings_triggered()
         regSettings->show();
 }
 
-//Edit->Properties pressed
-void QMonsterMash::on_actProperties_triggered()
+//Tools->Plot step response
+void QMonsterMash::on_actPlotStepResponse_triggered()
 {
-    prop->show();
+
 }

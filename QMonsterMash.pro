@@ -17,7 +17,7 @@
 
 QT       += core gui phonon
 
-TARGET = QMonsterMash
+TARGET   = QMonsterMash
 TEMPLATE = app
 
 
@@ -28,9 +28,9 @@ SOURCES +=  main.cpp\
             iothread.cpp \
             hydrometercorrectionwidget.cpp \
             boiltimerwidget.cpp \
-    regulator.cpp \
-    regulatorsettings.cpp \
-    properties.cpp
+            regulator.cpp \
+            regulatorsettings.cpp \
+    plotdialog.cpp
 
 HEADERS  += qmonstermash.h \
             pwmthread.h \
@@ -39,15 +39,15 @@ HEADERS  += qmonstermash.h \
             hydrometercorrectionwidget.h \
             boiltimerwidget.h \
             regulator.h \
-    regulatorsettings.h \
-    properties.h
+            regulatorsettings.h \
+    plotdialog.h
 
 FORMS    += qmonstermash.ui \
             mashschedulewidget.ui \
             hydrometercorrectionwidget.ui \
             boiltimerwidget.ui \
-    regulatorsettings.ui \
-    properties.ui
+            regulatorsettings.ui \
+    plotdialog.ui
 
 unix:!macx:!symbian: LIBS +=    -lethercat \
                                 -lkdeui \
@@ -57,12 +57,11 @@ INCLUDEPATH +=  /usr/include/kde4/
 
 RESOURCES +=    resource.qrc
 
-OTHER_FILES += \
-    README \
-    LICENSE \
-    sounds/air-raid-siren-alert.mp3 \
-    INSTALL \
-    scilab/qmonstermash.sce
+OTHER_FILES +=  README \
+                LICENSE \
+                sounds/air-raid-siren-alert.mp3 \
+                INSTALL \
+                scilab/qmonstermash.sce
 
 target.path = /opt/QMonsterMash
 INSTALLS += target
@@ -74,6 +73,3 @@ DEFINES +=  "BusCouplerAlias=0" \
             "AnaInPos=1" \
             "DigOutAlias=0" \
             "DigOutPos=2"
-
-
-

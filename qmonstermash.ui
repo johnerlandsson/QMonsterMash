@@ -226,13 +226,13 @@
     </property>
     <addaction name="actBoilTimer"/>
     <addaction name="actHydrometerCorrection"/>
+    <addaction name="actPlotStepResponse"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
      <string>Edit</string>
     </property>
     <addaction name="actRegSettings"/>
-    <addaction name="actProperties"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -272,9 +272,9 @@
     <string>Regulator settings</string>
    </property>
   </action>
-  <action name="actProperties">
+  <action name="actPlotStepResponse">
    <property name="text">
-    <string>Properties</string>
+    <string>Plot step response</string>
    </property>
   </action>
  </widget>

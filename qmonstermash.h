@@ -26,7 +26,6 @@
 #include "pwmthread.h"
 #include "regulator.h"
 #include "regulatorsettings.h"
-#include "properties.h"
 
 #define PLOT_MAX_Y 100
 #define PLOT_MAX_X 10
@@ -57,7 +56,6 @@ class QMonsterMash : public QMainWindow
         PWMThread *pwm;
         Regulator *reg;
         RegulatorSettings *regSettings;
-        Properties *prop;
 
     private slots:
         void updateLblPv();
@@ -73,7 +71,7 @@ class QMonsterMash : public QMainWindow
         void on_buttStartPump_clicked();
         void on_buttStopPump_clicked();
         void on_actRegSettings_triggered();
-        void on_actProperties_triggered();
+        void on_actPlotStepResponse_triggered();
 };
 
 #endif // QMONSTERMASH_H

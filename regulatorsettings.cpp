@@ -19,7 +19,6 @@
 #include "ui_regulatorsettings.h"
 #include <QMessageBox>
 
-
 RegulatorSettings::RegulatorSettings(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::RegulatorSettings)
@@ -33,6 +32,7 @@ RegulatorSettings::RegulatorSettings(QWidget *parent) :
         ui->dspnIMax->setValue( settings.value( "IMax" ).toDouble() );
         ui->dspnIMin->setValue( settings.value( "IMin" ).toDouble() );
         ui->spnCycleTime->setValue( settings.value( "cycleTime" ).toInt() );
+        ui->spnPWMCycleTime->setValue( settings.value( "pwmCycleTime" ).toInt() );
         settings.endGroup();
 }
 
@@ -57,6 +57,7 @@ void RegulatorSettings::on_buttSave_clicked()
         double imax = ui->dspnIMax->value();
         double imin = ui->dspnIMin->value();
         int cycletime = ui->spnCycleTime->value();
+        int pwmCycleTime = ui->spnPWMCycleTime->value();
 
         //Save to QSettings object
         settings.beginGroup( "QMonsterMash" );
@@ -65,11 +66,13 @@ void RegulatorSettings::on_buttSave_clicked()
         settings.setValue( "IMax", imax );
         settings.setValue( "IMin", imin );
         settings.setValue( "cycleTime", cycletime );
+        settings.setValue( "pwmCycleTime", pwmCycleTime );
         settings.endGroup();
 
         //Send new parameters as signal
         reg_para_t para;
         para.cycleTime = cycletime;
+        para.pwmCycleTime = pwmCycleTime;
         para.I = i;
         para.P = kp;
         para.Imax = imax;
@@ -84,6 +87,7 @@ RegulatorSettings::reg_para_t RegulatorSettings::getParameters()
 {
         reg_para_t ret;
         ret.cycleTime = ui->spnCycleTime->value();
+        ret.pwmCycleTime = ui->spnPWMCycleTime->value();
         ret.I = ui->dspnI->value();
         ret.P = ui->dspnKp->value();
         ret.Imax = ui->dspnIMax->value();
