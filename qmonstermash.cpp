@@ -279,6 +279,18 @@ void QMonsterMash::on_actPlotStepResponse_triggered()
     PlotDialog *pd = new PlotDialog( 0, ec );
     connect( pd, SIGNAL( startManual( double ) ), pwm, SLOT( startManual( double ) ) );
     connect( pd, SIGNAL( stopManual() ), pwm, SLOT( stop() ) );
+    connect( pd, SIGNAL( startingPlot(double) ), this, SLOT( starting_stepResponse( double ) ) );
+    connect( pd, SIGNAL( stoppingPlot() ), this, SLOT( stopping_stepResponse() ) );
 
     pd->show();
+}
+
+void QMonsterMash::starting_stepResponse(double output)
+{
+        ui->lblOutput->setText( QString::number( output, 'g', 2 ) + "%" );
+}
+
+void QMonsterMash::stopping_stepResponse()
+{
+        ui->lblOutput->setText( "0%" );
 }

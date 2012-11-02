@@ -72,6 +72,8 @@ class QMonsterMash : public QMainWindow
         void on_buttStopPump_clicked();
         void on_actRegSettings_triggered();
         void on_actPlotStepResponse_triggered();
+        void starting_stepResponse( double output );
+        void stopping_stepResponse();
 };
 
 #endif // QMONSTERMASH_H
