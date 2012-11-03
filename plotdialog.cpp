@@ -35,6 +35,8 @@ PlotDialog::PlotDialog( QWidget *parent, IoThread *io ) :
         connect( sampleTimer, SIGNAL( timeout() ), this, SLOT( takeSample() ) );
 
         filePath.clear();
+
+        setWindowFlags( Qt::FramelessWindowHint );
 }
 
 PlotDialog::~PlotDialog()
@@ -69,8 +71,6 @@ void PlotDialog::on_buttStart_clicked()
 
         ui->buttStop->setEnabled( true );
         ui->buttStart->setEnabled( false );
-
-        emit startingPlot( ui->dspnOutput->value() );
 }
 
 //Select file to save
@@ -91,8 +91,6 @@ void PlotDialog::on_buttStop_clicked()
 
         ui->buttStart->setEnabled( true );
         ui->buttStop->setEnabled( false );
-
-        emit stoppingPlot();
 }
 
 //This is the method that saves a sample at the given time

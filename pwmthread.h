@@ -38,6 +38,7 @@ class PWMThread : public QThread
 
     signals:
         void statusChanged( bool newStatus );
+        void outputChanged( QString newOutput );
 
     private:
         unsigned int cycleTime;

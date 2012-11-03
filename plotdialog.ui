@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>PlotDialog</class>
  <widget class="QDialog" name="PlotDialog">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -14,7 +17,7 @@
    <string>Step response</string>
   </property>
   <property name="sizeGripEnabled">
-   <bool>true</bool>
+   <bool>false</bool>
   </property>
   <property name="modal">
    <bool>true</bool>

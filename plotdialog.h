@@ -48,8 +48,6 @@ class PlotDialog : public QDialog
     signals:
         void startManual( double value );
         void stopManual();
-        void startingPlot( double output );
-        void stoppingPlot();
     private slots:
         void on_buttStart_clicked();
         void on_buttBrowse_clicked();

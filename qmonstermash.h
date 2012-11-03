@@ -34,6 +34,7 @@ namespace Ui {
     class QMonsterMash;
 }
 
+
 class QMonsterMash : public QMainWindow
 {
         Q_OBJECT
@@ -60,7 +61,6 @@ class QMonsterMash : public QMainWindow
     private slots:
         void updateLblPv();
         void updateLblSv();
-        void updateLblOutput();
         void incrementMinutes();
         void on_actExit_triggered();
         void on_actBoilTimer_triggered();
@@ -72,8 +72,6 @@ class QMonsterMash : public QMainWindow
         void on_buttStopPump_clicked();
         void on_actRegSettings_triggered();
         void on_actPlotStepResponse_triggered();
-        void starting_stepResponse( double output );
-        void stopping_stepResponse();
 };
 
 #endif // QMONSTERMASH_H

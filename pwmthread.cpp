@@ -26,6 +26,7 @@ PWMThread::PWMThread( QObject */*parent*/ )
     ec = NULL;
 }
 
+// Thread run method. All the good stuff happens here
 void PWMThread::run()
 {
     running = true;
@@ -61,6 +62,8 @@ void PWMThread::run()
 
         //Turn on
         emit statusChanged( true );
+
+        //Use time.h for precition delay
         while( true )
         {
             gettimeofday( &stop, NULL );
@@ -81,16 +84,22 @@ void PWMThread::run()
     }
 }
 
+//Stop thread
 void PWMThread::stop()
 {
     running = false;
+
+    emit outputChanged( QString::number( 0.0f, 'g', 2 ) + "%" );
 }
 
+//Set new output value Public
 void PWMThread::setValue( double newValue )
 {
     mutex.lock();
     value = newValue;
     mutex.unlock();
+
+    emit outputChanged( QString::number( newValue, 'g', 2 ) + "%" );
 }
 
 void PWMThread::setCycleTime(unsigned int newCycleTime)
@@ -105,4 +114,6 @@ void PWMThread::startManual( double manValue )
     value = manValue;
 
     start( QThread::HighPriority );
+
+    emit outputChanged( QString::number( manValue, 'g', 2 ) + "%" );
 }

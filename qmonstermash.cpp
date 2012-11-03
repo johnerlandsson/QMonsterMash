@@ -63,6 +63,7 @@ QMonsterMash::QMonsterMash(QWidget *parent) :
     //Set up pulse with modulation for output 0
     pwm = new PWMThread;
     connect( pwm, SIGNAL( statusChanged( bool ) ), ec, SLOT( setDigitalOutput0( bool ) ) );
+    connect( pwm, SIGNAL( outputChanged( QString ) ), ui->lblOutput, SLOT( setText(QString) ) );
 
     //Set up regulator
     regSettings = new RegulatorSettings;
@@ -105,12 +106,6 @@ void QMonsterMash::updateLblSv()
 {
     if( mashSchedule != NULL )
         ui->lblSv->setText( QString::number( mashSchedule->temp, 'f', 1 ) + QString::fromUtf8( "\u00B0" ) );
-}
-
-//Update tha label that holds the regulator output
-void QMonsterMash::updateLblOutput()
-{
-        ui->lblOutput->setText( QString::number( reg->getOutput(), 'f', 1 ) + "%" );
 }
 
 //This is the slot for minute timer. It tics the plot widget and switches between mash entries
@@ -279,18 +274,5 @@ void QMonsterMash::on_actPlotStepResponse_triggered()
     PlotDialog *pd = new PlotDialog( 0, ec );
     connect( pd, SIGNAL( startManual( double ) ), pwm, SLOT( startManual( double ) ) );
     connect( pd, SIGNAL( stopManual() ), pwm, SLOT( stop() ) );
-    connect( pd, SIGNAL( startingPlot(double) ), this, SLOT( starting_stepResponse( double ) ) );
-    connect( pd, SIGNAL( stoppingPlot() ), this, SLOT( stopping_stepResponse() ) );
-
     pd->show();
-}
-
-void QMonsterMash::starting_stepResponse(double output)
-{
-        ui->lblOutput->setText( QString::number( output, 'g', 2 ) + "%" );
-}
-
-void QMonsterMash::stopping_stepResponse()
-{
-        ui->lblOutput->setText( "0%" );
 }

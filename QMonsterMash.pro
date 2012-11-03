@@ -61,7 +61,9 @@ OTHER_FILES +=  README \
                 LICENSE \
                 sounds/air-raid-siren-alert.mp3 \
                 INSTALL \
-                scilab/qmonstermash.sce
+                scilab/qmonstermash.sce \
+    images/Stop-icon.png \
+    images/Play-icon.png
 
 target.path = /opt/QMonsterMash
 INSTALLS += target

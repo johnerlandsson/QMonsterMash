@@ -238,6 +238,7 @@
    <addaction name="menuEdit"/>
    <addaction name="menuTools"/>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -245,8 +246,9 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actStartMash"/>
+   <addaction name="actStopMash"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
   <action name="actBoilTimer">
    <property name="text">
     <string>Boil timer</string>
@@ -277,6 +279,24 @@
     <string>Plot step response</string>
    </property>
   </action>
+  <action name="actStartMash">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/images/Play-icon.png</normaloff>:/images/images/Play-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Start Mash</string>
+   </property>
+  </action>
+  <action name="actStopMash">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/images/Stop-icon.png</normaloff>:/images/images/Stop-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stop Mash</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -287,6 +307,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections/>
 </ui>
