@@ -36,7 +36,7 @@ PlotDialog::PlotDialog( QWidget *parent, IoThread *io ) :
 
         filePath.clear();
 
-        setWindowFlags( Qt::FramelessWindowHint );
+        //setWindowFlags( Qt::FramelessWindowHint );
 }
 
 PlotDialog::~PlotDialog()

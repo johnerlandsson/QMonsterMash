@@ -23,11 +23,13 @@
 #include <iostream>
 #include "plotdialog.h"
 
-QMonsterMash::QMonsterMash(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::QMonsterMash)
+QMonsterMash::QMonsterMash( QWidget *parent ) :
+    QMainWindow( parent ),
+    ui( new Ui::QMonsterMash )
 {
-    ui->setupUi(this);
+    //Setup gui.
+    ui->setupUi( this );
+    ui->actMash->setEnabled( false );
 
     //Start EtherCAT thread
     ec = new IoThread;
@@ -44,7 +46,6 @@ QMonsterMash::QMonsterMash(QWidget *parent) :
     tmrUpdateGUI = new QTimer;
     connect( tmrUpdateGUI, SIGNAL( timeout() ), this, SLOT( updateLblPv() ) );
     connect( tmrUpdateGUI, SIGNAL( timeout() ), this, SLOT( updateLblSv() ) );
-    connect( tmrUpdateGUI, SIGNAL( timeout() ), this, SLOT( updateLblOutput() ) );
     tmrUpdateGUI->start( 200 );
 
     //Set up the plot widget
@@ -180,18 +181,47 @@ void QMonsterMash::on_actMashSchedule_triggered()
     msv->show();
 }
 
-//Start mash button pressed
-void QMonsterMash::on_buttStart_clicked()
+//Tools->Hydrometer Correction pressed
+void QMonsterMash::on_actHydrometerCorrection_triggered()
+{
+    //Destroy object after each use. No need to keep settings
+    HydrometerCorrectionWidget *hcw = new HydrometerCorrectionWidget;
+    hcw->show();
+}
+
+//Helper function to set gui and io in accordance with pump being on
+void QMonsterMash::turn_pump_on()
+{
+    ec->setDigitalOutput1( true );
+    ui->actMash->setEnabled( true );
+    ui->actPump->setIcon( QIcon( ":/images/stopPumpIcon" ) );
+
+    pumpRunning = true;
+}
+
+//Helper function to set gui and io in accordance with pump being off
+void QMonsterMash::turn_pump_off()
+{
+    turn_mash_off();
+
+    ec->setDigitalOutput1( false );
+    ui->actMash->setEnabled( false );
+    ui->actPump->setIcon( QIcon( ":images/startPumpIcon" ) );
+
+    pumpRunning = false;
+}
+
+//Helper function to set gui and regulator in accordance with mashing being on
+void QMonsterMash::turn_mash_on()
 {
     mashRunning = true;
     minutes = 0;
 
     //Reset gui
-    ui->buttStart->setEnabled( false );
-    ui->buttStop->setEnabled( true );
     ui->actMashSchedule->setEnabled( false );
     ui->actRegSettings->setEnabled( false );
     ui->actPlotStepResponse->setEnabled( false );
+    ui->actMash->setIcon( QIcon( ":/images/stopMashIcon" ) );
 
     //Reload the linked list with mash schedule
     mashSchedule = msv->getMashEntries();
@@ -210,19 +240,18 @@ void QMonsterMash::on_buttStart_clicked()
     reg->start();
 }
 
-//Stop mash button pressed
-void QMonsterMash::on_buttStop_clicked()
+//Helper function to set gui and regulator in accordance with mashing being off
+void QMonsterMash::turn_mash_off()
 {
     mashRunning = false;
 
     ec->setDigitalOutput1( false );
 
     //Reset gui
-    ui->buttStart->setEnabled( true );
-    ui->buttStop->setEnabled( false );
     ui->actMashSchedule->setEnabled( true );
     ui->actRegSettings->setEnabled( true );
     ui->actPlotStepResponse->setEnabled( true );
+    ui->actMash->setIcon( QIcon( ":/images/startMashIcon" ) );
 
     //Stop pulse with modulation
     pwm->stop();
@@ -232,34 +261,22 @@ void QMonsterMash::on_buttStop_clicked()
     reg->stop();
 }
 
-//Tools->Hydrometer Correction pressed
-void QMonsterMash::on_actHydrometerCorrection_triggered()
+//Toolbar -> start pump button pressed
+void QMonsterMash::on_actPump_triggered()
 {
-    //Destroy object after each use. No need to keep settings
-    HydrometerCorrectionWidget *hcw = new HydrometerCorrectionWidget;
-    hcw->show();
+    if( !pumpRunning )
+        turn_pump_on();
+    else
+        turn_pump_off();
 }
 
-//Start pump button pressed
-void QMonsterMash::on_buttStartPump_clicked()
+//Toolbar -> start mash button pressed
+void QMonsterMash::on_actMash_triggered()
 {
-    pumpRunning = true;
-    ec->setDigitalOutput1( true );
-
-    //Reset gui
-    ui->buttStart->setEnabled( true );
-    ui->buttStartPump->setEnabled( false );
-    ui->buttStopPump->setEnabled( true );
-}
-
-//Stop pump button pressed
-void QMonsterMash::on_buttStopPump_clicked()
-{
-    pumpRunning = false;
-    ui->buttStartPump->setEnabled( true );
-    ui->buttStopPump->setEnabled( false );
-
-    on_buttStop_clicked();
+    if( !mashRunning )
+        turn_mash_on();
+    else
+        turn_mash_off();
 }
 
 //Edit->Regulator settings pressed

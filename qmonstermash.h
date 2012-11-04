@@ -57,6 +57,10 @@ class QMonsterMash : public QMainWindow
         PWMThread *pwm;
         Regulator *reg;
         RegulatorSettings *regSettings;
+        void turn_pump_on();
+        void turn_pump_off();
+        void turn_mash_on();
+        void turn_mash_off();
 
     private slots:
         void updateLblPv();
@@ -65,13 +69,11 @@ class QMonsterMash : public QMainWindow
         void on_actExit_triggered();
         void on_actBoilTimer_triggered();
         void on_actMashSchedule_triggered();
-        void on_buttStart_clicked();
-        void on_buttStop_clicked();
         void on_actHydrometerCorrection_triggered();
-        void on_buttStartPump_clicked();
-        void on_buttStopPump_clicked();
         void on_actRegSettings_triggered();
         void on_actPlotStepResponse_triggered();
+        void on_actPump_triggered();
+        void on_actMash_triggered();
 };
 
 #endif // QMONSTERMASH_H
