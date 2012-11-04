@@ -246,8 +246,8 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actStartMash"/>
-   <addaction name="actStopMash"/>
+   <addaction name="actMash"/>
+   <addaction name="actPump"/>
   </widget>
   <action name="actBoilTimer">
    <property name="text">
@@ -279,16 +279,16 @@
     <string>Plot step response</string>
    </property>
   </action>
-  <action name="actStartMash">
+  <action name="actMash">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/images/images/Play-icon.png</normaloff>:/images/images/Play-icon.png</iconset>
+     <normaloff>:/images/images/startMash.png</normaloff>:/images/images/startMash.png</iconset>
    </property>
    <property name="text">
     <string>Start Mash</string>
    </property>
   </action>
-  <action name="actStopMash">
+  <action name="actPump">
    <property name="icon">
     <iconset resource="resource.qrc">
      <normaloff>:/images/images/Stop-icon.png</normaloff>:/images/images/Stop-icon.png</iconset>

@@ -3,7 +3,9 @@
         <file alias="done">sounds/air-raid-siren-alert.mp3</file>
     </qresource>
     <qresource prefix="/images">
-        <file>images/Play-icon.png</file>
-        <file>images/Stop-icon.png</file>
+        <file>images/startMash.png</file>
+        <file>images/stopMash.png</file>
+        <file>images/stopPump.png</file>
+        <file>images/startPump.png</file>
     </qresource>
 </RCC>
