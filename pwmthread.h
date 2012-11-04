@@ -30,6 +30,7 @@ class PWMThread : public QThread
         PWMThread( QObject *parent = 0 );
         void run();
         void setCycleTime( unsigned int newCycleTime );
+        double getValue();
 
     public slots:
         void setValue( double newValue );

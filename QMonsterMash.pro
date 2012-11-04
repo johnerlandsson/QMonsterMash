@@ -72,6 +72,10 @@ OTHER_FILES +=  README \
 target.path = /opt/QMonsterMash
 INSTALLS += target
 
+DEFINES +=  "PLOT_MAX_Y=110" \
+            "PLOT_START_X=60"
+
+
 #Edit these values to suite your system
 DEFINES +=  "BusCouplerAlias=0" \
             "BusCouplerPos=0" \

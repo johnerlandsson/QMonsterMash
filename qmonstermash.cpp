@@ -22,6 +22,7 @@
 #include "boiltimerwidget.h"
 #include <iostream>
 #include "plotdialog.h"
+#include <assert.h>
 
 QMonsterMash::QMonsterMash( QWidget *parent ) :
     QMainWindow( parent ),
@@ -37,6 +38,9 @@ QMonsterMash::QMonsterMash( QWidget *parent ) :
     ec->setDigitalOutput0( false );
     ec->setDigitalOutput1( false );
 
+    //Make damned sure that radiator output is off
+    assert( ec->getDigitalOutput0() == false );
+
     //Set up the mash schedule widget. (Create in constructor and leave alive so settings doesent change)
     msv = new MashScheduleWidget;
     mashSchedule = msv->getMashEntries();
@@ -49,11 +53,19 @@ QMonsterMash::QMonsterMash( QWidget *parent ) :
     tmrUpdateGUI->start( 200 );
 
     //Set up the plot widget
-    ui->kpPV->setLimits( 0, PLOT_MAX_X, 0, PLOT_MAX_Y );
+    ui->kpPV->setLimits( 0, PLOT_START_X, 0, PLOT_MAX_Y );
     ui->kpPV->setAntialiasing( true );
 
-    kpoPV = new KPlotObject( Qt::green, KPlotObject::Lines, 1 );
-    ui->kpPV->addPlotObject( kpoPV );
+    KPlotObject *sv= new KPlotObject( Qt::green, KPlotObject::Lines, 1 );
+    plotObjects.append( sv );
+    KPlotObject *pv = new KPlotObject( Qt::blue, KPlotObject::Lines, 1 );
+    plotObjects.append( pv );
+    KPlotObject *outp = new KPlotObject( Qt::yellow, KPlotObject::Lines, 1 );
+    plotObjects.append( outp );
+
+    ui->kpPV->addPlotObjects( plotObjects );
+
+    ui->kpPV->update();
 
     //Set up the minute timer that tics the plot widget and switches mash entries
     minutes = 0;
@@ -77,6 +89,8 @@ QMonsterMash::QMonsterMash( QWidget *parent ) :
     //Set up other variables
     mashRunning = false;
     pumpRunning = false;
+
+
 }
 
 QMonsterMash::~QMonsterMash()
@@ -112,6 +126,10 @@ void QMonsterMash::updateLblSv()
 //This is the slot for minute timer. It tics the plot widget and switches between mash entries
 void QMonsterMash::incrementMinutes()
 {
+    //Make shure that start mashing has been pressed
+    if( !mashRunning )
+        return;
+
     static int minutesAtSv = 0;
     static bool flagSet = false;
     if( minutes == 0 )
@@ -121,20 +139,19 @@ void QMonsterMash::incrementMinutes()
         flagSet = false;
     }
 
-    //Make shure that start mashing has been pressed
-    if( !mashRunning )
-        return;
-
     //Make sure that the mashschedule linked list is valid
-    if( mashSchedule == NULL )
-        throw "Bad pointer from MashScheduleWidget";
-
+    assert( mashSchedule != NULL );
 
     //Only count the minutes when pv>=sv
     if( ec->getAnalogInput1() >= mashSchedule->temp )
         minutesAtSv++;
 
     minutes++;
+
+    //Display progress in statusbar
+    QString progressH = QString( "%1" ).arg( minutes / 60, 2, 16, QChar( '0' ) ).toUpper();
+    QString progressM = QString( "%1" ).arg( minutes % 60, 2, 16, QChar( '0' ) ).toUpper();
+    ui->statusBar->showMessage( "Mash running " + progressH + ":" + progressM );
 
     //Expand the x axis of the plot
     if( minutes > 10 )
@@ -144,12 +161,17 @@ void QMonsterMash::incrementMinutes()
     if( !flagSet && ec->getAnalogInput1() >= mashSchedule->temp )
     {
         flagSet = true;
-        kpoPV->addPoint( minutes, ec->getAnalogInput1(), QString( "%1" ).arg( mashSchedule->name ), 1 );
+        plotObjects[1]->addPoint( minutes, ec->getAnalogInput1(), QString( "%1" ).arg( mashSchedule->name ), 1 );
     }
     else
     {
-        kpoPV->addPoint( minutes, ec->getAnalogInput1() );
+        plotObjects[1]->addPoint( minutes, ec->getAnalogInput1() );
     }
+
+    //Add points for set value and output
+    plotObjects[0]->addPoint( minutes, mashSchedule->temp );
+    plotObjects[2]->addPoint( minutes, pwm->getValue() );
+
     ui->kpPV->update();
 
     //Stop switching mash entries when at the last object of the mash schedule linked list
@@ -217,11 +239,13 @@ void QMonsterMash::turn_mash_on()
     mashRunning = true;
     minutes = 0;
 
+
     //Reset gui
     ui->actMashSchedule->setEnabled( false );
     ui->actRegSettings->setEnabled( false );
     ui->actPlotStepResponse->setEnabled( false );
     ui->actMash->setIcon( QIcon( ":/images/stopMashIcon" ) );
+    ui->statusBar->showMessage( "Mash running: 00:00" );
 
     //Reload the linked list with mash schedule
     mashSchedule = msv->getMashEntries();
@@ -229,9 +253,13 @@ void QMonsterMash::turn_mash_on()
 
     //Reset the plot widget
     ui->kpPV->setLimits( 0, 10, 0, 80 );
-    kpoPV->clearPoints();
+    plotObjects[0]->clearPoints();
+    plotObjects[1]->clearPoints();
+    plotObjects[2]->clearPoints();
     ui->kpPV->update();
-    kpoPV->addPoint( 0, ec->getAnalogInput1() );
+    plotObjects[0]->addPoint( 0, mashSchedule->temp );
+    plotObjects[1]->addPoint( 0, ec->getAnalogInput1() );
+    plotObjects[2]->addPoint( 0, 0 );
 
     //Start pulse with modulation
     pwm->start( QThread::HighPriority );
@@ -252,6 +280,7 @@ void QMonsterMash::turn_mash_off()
     ui->actRegSettings->setEnabled( true );
     ui->actPlotStepResponse->setEnabled( true );
     ui->actMash->setIcon( QIcon( ":/images/startMashIcon" ) );
+    ui->statusBar->showMessage( "" );
 
     //Stop pulse with modulation
     pwm->stop();

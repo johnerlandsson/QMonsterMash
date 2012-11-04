@@ -27,9 +27,6 @@
 #include "regulator.h"
 #include "regulatorsettings.h"
 
-#define PLOT_MAX_Y 100
-#define PLOT_MAX_X 10
-
 namespace Ui {
     class QMonsterMash;
 }
@@ -49,7 +46,7 @@ class QMonsterMash : public QMainWindow
         QTimer *tmrUpdateGUI;
         QTimer *tmrMinute;
         unsigned int minutes;
-        KPlotObject *kpoPV;
+        QList<KPlotObject *> plotObjects;
         MashScheduleWidget *msv;
         bool mashRunning;
         bool pumpRunning;

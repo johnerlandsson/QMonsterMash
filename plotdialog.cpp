@@ -35,8 +35,6 @@ PlotDialog::PlotDialog( QWidget *parent, IoThread *io ) :
         connect( sampleTimer, SIGNAL( timeout() ), this, SLOT( takeSample() ) );
 
         filePath.clear();
-
-        //setWindowFlags( Qt::FramelessWindowHint );
 }
 
 PlotDialog::~PlotDialog()

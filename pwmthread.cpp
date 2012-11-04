@@ -117,3 +117,13 @@ void PWMThread::startManual( double manValue )
 
     emit outputChanged( QString::number( manValue, 'g', 2 ) + "%" );
 }
+
+//Public method to return current output value
+double PWMThread::getValue()
+{
+    mutex.lock();
+    double ret = value;
+    mutex.unlock();
+
+    return ret;
+}
