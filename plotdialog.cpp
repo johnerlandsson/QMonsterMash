@@ -51,16 +51,17 @@ void PlotDialog::on_buttStart_clicked()
 
         if( filePath == "" )
         {
-                QMessageBox::information( this, "Filename", "No file selected" );
-                return;
+            QMessageBox::information( this, tr( "Filename" ), tr( "No file selected" ) );
+            return;
         }
 
         file.setFileName( filePath );
 
         if( !file.open( QFile::WriteOnly ) )
         {
-                QMessageBox::critical( this, "Error", QString( "Could not open file \"%1\" for writing." ).arg( filePath ) );
-                return;
+            QString msg = tr( "Could not open file " ) + QString( "\"%1\"" ).arg( filePath ) + tr( "for writing" );
+            QMessageBox::critical( this, tr( "Error" ), msg );
+            return;
         }
 
         sampleTimer->start( ui->spnSampleTime->value() );
@@ -74,7 +75,7 @@ void PlotDialog::on_buttStart_clicked()
 //Select file to save
 void PlotDialog::on_buttBrowse_clicked()
 {
-        filePath = QFileDialog::getSaveFileName( this, "Save plot", QDir::homePath(), "Comma separated value (*.csv)" );
+        filePath = QFileDialog::getSaveFileName( this, tr( "Save plot" ), QDir::homePath(), "Comma separated value (*.csv)" );
         if( filePath.section( ".", 1, 1 ) != "csv" )
                 filePath.append( ".csv" );
 }

@@ -37,6 +37,7 @@ public:
                 double Imax;
                 double Imin;
                 int cycleTime;
+                double tolerance;
                 int pwmCycleTime;
         }reg_para_t;
 

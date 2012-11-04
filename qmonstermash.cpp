@@ -89,8 +89,6 @@ QMonsterMash::QMonsterMash( QWidget *parent ) :
     //Set up other variables
     mashRunning = false;
     pumpRunning = false;
-
-
 }
 
 QMonsterMash::~QMonsterMash()
@@ -142,16 +140,25 @@ void QMonsterMash::incrementMinutes()
     //Make sure that the mashschedule linked list is valid
     assert( mashSchedule != NULL );
 
-    //Only count the minutes when pv>=sv
-    if( ec->getAnalogInput1() >= mashSchedule->temp )
+    //Only count the minutes when pv is within the preset tolerance
+    double pv = ec->getAnalogInput1();
+    double tolerance = regSettings->getParameters().tolerance;
+    double sv = mashSchedule->temp;
+
+    //TODO pv > sv?
+    if( pv > (sv - tolerance) )
         minutesAtSv++;
 
+
+
     minutes++;
+
+
 
     //Display progress in statusbar
     QString progressH = QString( "%1" ).arg( minutes / 60, 2, 16, QChar( '0' ) ).toUpper();
     QString progressM = QString( "%1" ).arg( minutes % 60, 2, 16, QChar( '0' ) ).toUpper();
-    ui->statusBar->showMessage( "Mash running " + progressH + ":" + progressM );
+    ui->statusBar->showMessage( tr( "Mash running: " ) + progressH + ":" + progressM );
 
     //Expand the x axis of the plot
     if( minutes > 10 )
@@ -217,6 +224,7 @@ void QMonsterMash::turn_pump_on()
     ec->setDigitalOutput1( true );
     ui->actMash->setEnabled( true );
     ui->actPump->setIcon( QIcon( ":/images/stopPumpIcon" ) );
+    ui->actPump->setText( tr( "Stop pump" ) );
 
     pumpRunning = true;
 }
@@ -229,6 +237,7 @@ void QMonsterMash::turn_pump_off()
     ec->setDigitalOutput1( false );
     ui->actMash->setEnabled( false );
     ui->actPump->setIcon( QIcon( ":images/startPumpIcon" ) );
+    ui->actPump->setText( tr( "Start pump" ) );
 
     pumpRunning = false;
 }
@@ -245,7 +254,8 @@ void QMonsterMash::turn_mash_on()
     ui->actRegSettings->setEnabled( false );
     ui->actPlotStepResponse->setEnabled( false );
     ui->actMash->setIcon( QIcon( ":/images/stopMashIcon" ) );
-    ui->statusBar->showMessage( "Mash running: 00:00" );
+    ui->actMash->setText( tr( "Stop mash" ) );
+    ui->statusBar->showMessage( tr( "Mash running: ") + "00:00" );
 
     //Reload the linked list with mash schedule
     mashSchedule = msv->getMashEntries();
@@ -280,6 +290,7 @@ void QMonsterMash::turn_mash_off()
     ui->actRegSettings->setEnabled( true );
     ui->actPlotStepResponse->setEnabled( true );
     ui->actMash->setIcon( QIcon( ":/images/startMashIcon" ) );
+    ui->actMash->setText( tr( "Start mash" ) );
     ui->statusBar->showMessage( "" );
 
     //Stop pulse with modulation

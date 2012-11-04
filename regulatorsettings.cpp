@@ -32,6 +32,7 @@ RegulatorSettings::RegulatorSettings(QWidget *parent) :
         ui->dspnIMax->setValue( settings.value( "IMax" ).toDouble() );
         ui->dspnIMin->setValue( settings.value( "IMin" ).toDouble() );
         ui->spnCycleTime->setValue( settings.value( "cycleTime" ).toInt() );
+        ui->dspnTolerance->setValue( settings.value( "Tolerance" ).toDouble() );
         ui->spnPWMCycleTime->setValue( settings.value( "pwmCycleTime" ).toInt() );
         settings.endGroup();
 }
@@ -57,6 +58,7 @@ void RegulatorSettings::on_buttSave_clicked()
         double imax = ui->dspnIMax->value();
         double imin = ui->dspnIMin->value();
         int cycletime = ui->spnCycleTime->value();
+        double tolerance = ui->dspnTolerance->value();
         int pwmCycleTime = ui->spnPWMCycleTime->value();
 
         //Save to QSettings object
@@ -66,6 +68,7 @@ void RegulatorSettings::on_buttSave_clicked()
         settings.setValue( "IMax", imax );
         settings.setValue( "IMin", imin );
         settings.setValue( "cycleTime", cycletime );
+        settings.setValue( "Tolerance", tolerance );
         settings.setValue( "pwmCycleTime", pwmCycleTime );
         settings.endGroup();
 
@@ -92,6 +95,7 @@ RegulatorSettings::reg_para_t RegulatorSettings::getParameters()
         ret.P = ui->dspnKp->value();
         ret.Imax = ui->dspnIMax->value();
         ret.Imin = ui->dspnIMin->value();
+        ret.tolerance = ui->dspnTolerance->value();
 
         return ret;
 }

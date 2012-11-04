@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>239</width>
-    <height>222</height>
+    <width>250</width>
+    <height>232</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,14 +22,14 @@
      <item row="0" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Proportional gain</string>
+        <string>Proportional gain (Kp)</string>
        </property>
       </widget>
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Integral</string>
+        <string>Integral (I)</string>
        </property>
       </widget>
      </item>
@@ -148,6 +148,35 @@
        </property>
        <property name="value">
         <number>1000</number>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QDoubleSpinBox" name="dspnTolerance">
+       <property name="suffix">
+        <string>°C</string>
+       </property>
+       <property name="decimals">
+        <number>1</number>
+       </property>
+       <property name="minimum">
+        <double>0.100000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>10.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+       <property name="value">
+        <double>0.500000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Regulator tolerance (+/-)</string>
        </property>
       </widget>
      </item>

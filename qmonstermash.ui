@@ -145,6 +145,8 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actPump"/>
+    <addaction name="actMash"/>
     <addaction name="actMashSchedule"/>
     <addaction name="separator"/>
     <addaction name="actExit"/>
@@ -229,9 +231,6 @@
      <normaloff>:/images/startPumpIcon</normaloff>:/images/startPumpIcon</iconset>
    </property>
    <property name="text">
-    <string>Start pump</string>
-   </property>
-   <property name="toolTip">
     <string>Start pump</string>
    </property>
   </action>
