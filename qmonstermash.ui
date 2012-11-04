@@ -291,10 +291,13 @@
   <action name="actPump">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/images/images/Stop-icon.png</normaloff>:/images/images/Stop-icon.png</iconset>
+     <normaloff>:/images/images/startPump.png</normaloff>:/images/images/startPump.png</iconset>
    </property>
    <property name="text">
     <string>Stop Mash</string>
+   </property>
+   <property name="toolTip">
+    <string>Start pump</string>
    </property>
   </action>
  </widget>
