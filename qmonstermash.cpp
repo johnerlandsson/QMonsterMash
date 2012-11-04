@@ -93,10 +93,19 @@ QMonsterMash::QMonsterMash( QWidget *parent ) :
 
 QMonsterMash::~QMonsterMash()
 {
-    //Stop thread before destroying
+    ec->setDigitalOutput0( false );
+    ec->setDigitalOutput1( false );
+
+    //Stop threads before destroying
+    pwm->stop();
+    pwm->wait();
     ec->stop();
     ec->wait();
+
+
     delete ui;
+
+
 }
 
 //File->Exit pressed
