@@ -23,6 +23,7 @@
 #include <iostream>
 #include "plotdialog.h"
 #include <assert.h>
+#include "plotstatusbar.h"
 
 QMonsterMash::QMonsterMash( QWidget *parent ) :
     QMainWindow( parent ),
@@ -31,6 +32,8 @@ QMonsterMash::QMonsterMash( QWidget *parent ) :
     //Setup gui.
     ui->setupUi( this );
     ui->actMash->setEnabled( false );
+    PlotStatusBar *psb = new PlotStatusBar;
+    ui->statusBar->addWidget( psb );
 
     //Start EtherCAT thread
     ec = new IoThread;
@@ -158,16 +161,19 @@ void QMonsterMash::incrementMinutes()
     if( pv > (sv - tolerance) )
         minutesAtSv++;
 
+    qDebug() << minutesAtSv << ec->getAnalogInput1();
 
 
     minutes++;
 
 
 
+    /*
     //Display progress in statusbar
     QString progressH = QString( "%1" ).arg( minutes / 60, 2, 16, QChar( '0' ) ).toUpper();
     QString progressM = QString( "%1" ).arg( minutes % 60, 2, 16, QChar( '0' ) ).toUpper();
     ui->statusBar->showMessage( tr( "Mash running: " ) + progressH + ":" + progressM );
+    */
 
     //Expand the x axis of the plot
     if( minutes > 10 )
@@ -264,7 +270,7 @@ void QMonsterMash::turn_mash_on()
     ui->actPlotStepResponse->setEnabled( false );
     ui->actMash->setIcon( QIcon( ":/images/stopMashIcon" ) );
     ui->actMash->setText( tr( "Stop mash" ) );
-    ui->statusBar->showMessage( tr( "Mash running: ") + "00:00" );
+    //ui->statusBar->showMessage( tr( "Mash running: ") + "00:00" );
 
     //Reload the linked list with mash schedule
     mashSchedule = msv->getMashEntries();
@@ -284,7 +290,7 @@ void QMonsterMash::turn_mash_on()
     pwm->start( QThread::HighPriority );
 
     //Start regulator
-    reg->start();
+//    reg->start();
 }
 
 //Helper function to set gui and regulator in accordance with mashing being off
@@ -300,7 +306,7 @@ void QMonsterMash::turn_mash_off()
     ui->actPlotStepResponse->setEnabled( true );
     ui->actMash->setIcon( QIcon( ":/images/startMashIcon" ) );
     ui->actMash->setText( tr( "Start mash" ) );
-    ui->statusBar->showMessage( "" );
+    //ui->statusBar->showMessage( "" );
 
     //Stop pulse with modulation
     pwm->stop();

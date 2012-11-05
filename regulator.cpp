@@ -34,6 +34,9 @@ void Regulator::updatePI()
 
     IState += error;
 
+    if( error < 0 ) //Prevent windup
+        IState = 0;
+
     if( IState >= iMax )  //Make sure that IState stays in between IMin and IMax
         IState = iMax;
     else if( IState <= iMin )
@@ -72,9 +75,6 @@ void Regulator::stop()
 //Save new set value
 void Regulator::setSv(double newValue)
 {
-        if( sv > newValue ) //Clear IState if Sv is lowered
-                IState = 0;
-
         sv = newValue;
 }
 

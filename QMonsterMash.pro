@@ -30,7 +30,8 @@ SOURCES +=  main.cpp\
             boiltimerwidget.cpp \
             regulator.cpp \
             regulatorsettings.cpp \
-    plotdialog.cpp
+    plotdialog.cpp \
+    plotstatusbar.cpp
 
 HEADERS  += qmonstermash.h \
             pwmthread.h \
@@ -40,14 +41,16 @@ HEADERS  += qmonstermash.h \
             boiltimerwidget.h \
             regulator.h \
             regulatorsettings.h \
-    plotdialog.h
+    plotdialog.h \
+    plotstatusbar.h
 
 FORMS    += qmonstermash.ui \
             mashschedulewidget.ui \
             hydrometercorrectionwidget.ui \
             boiltimerwidget.ui \
             regulatorsettings.ui \
-    plotdialog.ui
+    plotdialog.ui \
+    plotstatusbar.ui
 
 unix:!macx:!symbian: LIBS +=    -lethercat \
                                 -lkdeui \
@@ -83,3 +86,6 @@ DEFINES +=  "BusCouplerAlias=0" \
             "AnaInPos=1" \
             "DigOutAlias=0" \
             "DigOutPos=2"
+
+
+
