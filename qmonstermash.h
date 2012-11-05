@@ -59,6 +59,10 @@ class QMonsterMash : public QMainWindow
         void turn_mash_on();
         void turn_mash_off();
 
+    signals:
+        void pv_changed( QString newValue );
+        void sv_changed( QString newValue );
+
     private slots:
         void updateLblPv();
         void updateLblSv();

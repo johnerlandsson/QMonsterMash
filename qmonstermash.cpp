@@ -33,6 +33,7 @@ QMonsterMash::QMonsterMash( QWidget *parent ) :
     ui->setupUi( this );
     ui->actMash->setEnabled( false );
     PlotStatusBar *psb = new PlotStatusBar;
+    connect( this, SIGNAL( pv_changed( QString ) ) , psb, SLOT( setPv( QString ) ) );
     ui->statusBar->addWidget( psb );
 
     //Start EtherCAT thread
@@ -80,6 +81,7 @@ QMonsterMash::QMonsterMash( QWidget *parent ) :
     pwm = new PWMThread;
     connect( pwm, SIGNAL( statusChanged( bool ) ), ec, SLOT( setDigitalOutput0( bool ) ) );
     connect( pwm, SIGNAL( outputChanged( QString ) ), ui->lblOutput, SLOT( setText(QString) ) );
+    connect( pwm, SIGNAL( outputChanged( QString ) ), psb, SLOT( setOutput( QString ) ) ); //Connect to label in statusbar
 
     //Set up regulator
     regSettings = new RegulatorSettings;
@@ -121,6 +123,9 @@ void QMonsterMash::on_actExit_triggered()
 void QMonsterMash::updateLblPv()
 {
     QString anin = QString::number( ec->getAnalogInput1(), 'f', 1 ) + QString::fromUtf8( "\u00B0" );
+    emit pv_changed( anin );
+
+    //TODO delete this
     ui->lblPv->setText( anin );
 
     reg->setPv( ec->getAnalogInput1() );
@@ -156,6 +161,8 @@ void QMonsterMash::incrementMinutes()
     double pv = ec->getAnalogInput1();
     double tolerance = regSettings->getParameters().tolerance;
     double sv = mashSchedule->temp;
+
+    emit sv_changed( QString::number( sv, 'g', 2 ) );
 
     //TODO pv > sv?
     if( pv > (sv - tolerance) )

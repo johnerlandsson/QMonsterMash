@@ -16,3 +16,18 @@ PlotStatusBar::~PlotStatusBar()
 {
     delete ui;
 }
+
+void PlotStatusBar::setPv( QString newValue )
+{
+    ui->lblPv->setText( newValue );
+}
+
+void PlotStatusBar::setSv( QString newValue )
+{
+    ui->lblSv->setText( newValue );
+}
+
+void PlotStatusBar::setOutput( QString newValue )
+{
+    ui->lblOutput->setText( newValue );
+}

@@ -15,6 +15,11 @@ public:
     explicit PlotStatusBar(QWidget *parent = 0);
     ~PlotStatusBar();
 
+public slots:
+        void setOutput( QString newValue );
+        void setPv( QString newValue );
+        void setSv( QString newValue );
+
 private:
     Ui::PlotStatusBar *ui;
 };
