@@ -90,6 +90,7 @@ void PWMThread::stop()
     running = false;
 
     emit outputChanged( QString::number( 0.0f, 'g', 2 ) + "%" );
+    emit statusChanged( false );
 }
 
 //Set new output value Public

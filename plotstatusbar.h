@@ -1,7 +1,7 @@
 #ifndef PLOTSTATUSBAR_H
 #define PLOTSTATUSBAR_H
 
-#include <QWidget>
+#include <QStatusBar>
 
 namespace Ui {
     class PlotStatusBar;
@@ -12,7 +12,7 @@ class PlotStatusBar : public QWidget
     Q_OBJECT
 
 public:
-    explicit PlotStatusBar(QWidget *parent = 0);
+    explicit PlotStatusBar( QWidget *parent = 0 );
     ~PlotStatusBar();
 
 public slots:

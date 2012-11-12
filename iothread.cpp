@@ -124,11 +124,6 @@ void IoThread::run()
 {
     running = true;
 
-    outp0Value = true;
-
-    //Take a moment...
-    usleep( 1000 );
-
     while( running )
     {
         ecrt_master_receive( master );

@@ -32,9 +32,11 @@ QMonsterMash::QMonsterMash( QWidget *parent ) :
     //Setup gui.
     ui->setupUi( this );
     ui->actMash->setEnabled( false );
+
     PlotStatusBar *psb = new PlotStatusBar;
     connect( this, SIGNAL( pv_changed( QString ) ) , psb, SLOT( setPv( QString ) ) );
-    ui->statusBar->addWidget( psb );
+    ui->statusBar->insertPermanentWidget( 0, psb, 1 );
+
 
     //Start EtherCAT thread
     ec = new IoThread;
@@ -42,8 +44,6 @@ QMonsterMash::QMonsterMash( QWidget *parent ) :
     ec->setDigitalOutput0( false );
     ec->setDigitalOutput1( false );
 
-    //Make damned sure that radiator output is off
-    assert( ec->getDigitalOutput0() == false );
 
     //Set up the mash schedule widget. (Create in constructor and leave alive so settings doesent change)
     msv = new MashScheduleWidget;
@@ -54,6 +54,7 @@ QMonsterMash::QMonsterMash( QWidget *parent ) :
     tmrUpdateGUI = new QTimer;
     connect( tmrUpdateGUI, SIGNAL( timeout() ), this, SLOT( updateLblPv() ) );
     connect( tmrUpdateGUI, SIGNAL( timeout() ), this, SLOT( updateLblSv() ) );
+    connect( this, SIGNAL( sv_changed( QString ) ), psb, SLOT( setSv( QString ) ) );
     tmrUpdateGUI->start( 200 );
 
     //Set up the plot widget
@@ -80,8 +81,9 @@ QMonsterMash::QMonsterMash( QWidget *parent ) :
     //Set up pulse with modulation for output 0
     pwm = new PWMThread;
     connect( pwm, SIGNAL( statusChanged( bool ) ), ec, SLOT( setDigitalOutput0( bool ) ) );
-    connect( pwm, SIGNAL( outputChanged( QString ) ), ui->lblOutput, SLOT( setText(QString) ) );
     connect( pwm, SIGNAL( outputChanged( QString ) ), psb, SLOT( setOutput( QString ) ) ); //Connect to label in statusbar
+    pwm->setValue( 0 );
+
 
     //Set up regulator
     regSettings = new RegulatorSettings;
@@ -94,6 +96,9 @@ QMonsterMash::QMonsterMash( QWidget *parent ) :
     //Set up other variables
     mashRunning = false;
     pumpRunning = false;
+
+    //Make damned sure that radiator output is off
+    assert( ec->getDigitalOutput0() == false );
 }
 
 QMonsterMash::~QMonsterMash()
@@ -125,9 +130,6 @@ void QMonsterMash::updateLblPv()
     QString anin = QString::number( ec->getAnalogInput1(), 'f', 1 ) + QString::fromUtf8( "\u00B0" );
     emit pv_changed( anin );
 
-    //TODO delete this
-    ui->lblPv->setText( anin );
-
     reg->setPv( ec->getAnalogInput1() );
 }
 
@@ -135,7 +137,7 @@ void QMonsterMash::updateLblPv()
 void QMonsterMash::updateLblSv()
 {
     if( mashSchedule != NULL )
-        ui->lblSv->setText( QString::number( mashSchedule->temp, 'f', 1 ) + QString::fromUtf8( "\u00B0" ) );
+        emit sv_changed( QString::number( mashSchedule->temp, 'f', 1 ) + QString::fromUtf8( "\u00B0" ) );
 }
 
 //This is the slot for minute timer. It tics the plot widget and switches between mash entries
@@ -162,25 +164,13 @@ void QMonsterMash::incrementMinutes()
     double tolerance = regSettings->getParameters().tolerance;
     double sv = mashSchedule->temp;
 
-    emit sv_changed( QString::number( sv, 'g', 2 ) );
-
     //TODO pv > sv?
     if( pv > (sv - tolerance) )
         minutesAtSv++;
 
-    qDebug() << minutesAtSv << ec->getAnalogInput1();
-
 
     minutes++;
 
-
-
-    /*
-    //Display progress in statusbar
-    QString progressH = QString( "%1" ).arg( minutes / 60, 2, 16, QChar( '0' ) ).toUpper();
-    QString progressM = QString( "%1" ).arg( minutes % 60, 2, 16, QChar( '0' ) ).toUpper();
-    ui->statusBar->showMessage( tr( "Mash running: " ) + progressH + ":" + progressM );
-    */
 
     //Expand the x axis of the plot
     if( minutes > 10 )
@@ -297,7 +287,7 @@ void QMonsterMash::turn_mash_on()
     pwm->start( QThread::HighPriority );
 
     //Start regulator
-//    reg->start();
+    reg->start();
 }
 
 //Helper function to set gui and regulator in accordance with mashing being off
@@ -315,12 +305,14 @@ void QMonsterMash::turn_mash_off()
     ui->actMash->setText( tr( "Start mash" ) );
     //ui->statusBar->showMessage( "" );
 
+    //stop regulator
+    reg->stop();
+
     //Stop pulse with modulation
     pwm->stop();
     pwm->wait();
 
-    //stop regulator
-    reg->stop();
+    assert( !ec->getDigitalOutput0() );
 }
 
 //Toolbar -> start pump button pressed

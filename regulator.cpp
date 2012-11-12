@@ -16,6 +16,7 @@
 */
 
 #include "regulator.h"
+#include <QDebug>
 
 
 Regulator::Regulator( QObject */*parent*/ )
@@ -34,9 +35,6 @@ void Regulator::updatePI()
 
     IState += error;
 
-    if( error < 0 ) //Prevent windup
-        IState = 0;
-
     if( IState >= iMax )  //Make sure that IState stays in between IMin and IMax
         IState = iMax;
     else if( IState <= iMin )
@@ -51,8 +49,9 @@ void Regulator::updatePI()
     else if( output < 0.0f )
         output = 0.0f;
 
-
     emit outputChanged( output );
+
+    qDebug() << IState << " " << iTerm << " " << pTerm << " " << output;
 }
 
 //Start regulator
@@ -68,6 +67,7 @@ void Regulator::stop()
 {
     cycleTimer->stop();
     output = 0;
+    IState = 0;
 
     emit outputChanged( 0.0f );
 }

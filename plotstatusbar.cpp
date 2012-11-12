@@ -1,8 +1,9 @@
 #include "plotstatusbar.h"
 #include "ui_plotstatusbar.h"
+#include <QDebug>
 
-PlotStatusBar::PlotStatusBar(QWidget *parent) :
-    QWidget(parent),
+PlotStatusBar::PlotStatusBar( QWidget *parent ) :
+    QWidget( parent ),
     ui(new Ui::PlotStatusBar)
 {
     ui->setupUi(this);
