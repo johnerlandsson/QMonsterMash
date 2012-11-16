@@ -22,11 +22,11 @@
 #include <QTimer>
 #include "iothread.h"
 #include <kplotobject.h>
-#include "mashschedulewidget.h"
 #include "mashschedule.h"
 #include "pwmthread.h"
 #include "regulator.h"
 #include "regulatorsettings.h"
+#include "mashschedule.h"
 
 namespace Ui {
     class QMonsterMash;
@@ -48,13 +48,11 @@ class QMonsterMash : public QMainWindow
         QTimer *tmrMinute;
         unsigned int minutes;
         QList<KPlotObject *> plotObjects;
-        MashScheduleWidget *msv;
         bool mashRunning;
         bool pumpRunning;
 
-        MashScheduleWidget::mashEntry_t *tmpmashSchedule;
-        MashSchedule mashSchedule;
         PWMThread *pwm;
+        MashSchedule mashSchedule;
         Regulator *reg;
         RegulatorSettings *regSettings;
         void turn_pump_on();

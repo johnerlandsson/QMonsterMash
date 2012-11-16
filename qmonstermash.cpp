@@ -133,6 +133,7 @@ void QMonsterMash::updateLblPv()
 void QMonsterMash::incrementMinutes()
 {
     double pv = ec->getAnalogInput1();
+    double sv = mashSchedule.getCurrentTemp();
 
     //Make shure that start mashing has been pressed
     if( !mashRunning )
@@ -142,14 +143,13 @@ void QMonsterMash::incrementMinutes()
     static bool flagSet = false;
     if( minutes == 0 )
     {
-        reg->setSv( tmpmashSchedule->temp );
+        reg->setSv( sv );
         minutesAtSv = 0;
         flagSet = false;
     }
 
     //Only count the minutes when pv is within the preset tolerance
     double tolerance = regSettings->getParameters().tolerance;
-    double sv = tmpmashSchedule->temp;
 
     //TODO pv > sv?
     if( pv > (sv - tolerance) )
@@ -164,7 +164,7 @@ void QMonsterMash::incrementMinutes()
         ui->kpPV->setLimits( 0, minutes, 0, PLOT_MAX_Y );
 
     //Set a flag on the first point of every rest
-    if( !flagSet && pv >= mashSchedule.getCurrentTemp() )
+    if( !flagSet && pv >= sv )
     {
         flagSet = true;
         plotObjects[1]->addPoint( minutes, pv, QString( "%1" ).arg( mashSchedule.getCurrentName() ), 1 );
@@ -175,7 +175,7 @@ void QMonsterMash::incrementMinutes()
     }
 
     //Add points for set value and output
-    plotObjects[0]->addPoint( minutes, mashSchedule.getCurrentTemp() );
+    plotObjects[0]->addPoint( minutes, sv );
     plotObjects[2]->addPoint( minutes, pwm->getValue() );
 
     ui->kpPV->update();

@@ -24,7 +24,6 @@ TEMPLATE = app
 SOURCES +=  main.cpp\
             qmonstermash.cpp \
             pwmthread.cpp \
-            mashschedulewidget.cpp \
             iothread.cpp \
             hydrometercorrectionwidget.cpp \
             boiltimerwidget.cpp \
@@ -40,7 +39,6 @@ SOURCES +=  main.cpp\
 
 HEADERS  += qmonstermash.h \
             pwmthread.h \
-            mashschedulewidget.h \
             iothread.h \
             hydrometercorrectionwidget.h \
             boiltimerwidget.h \
@@ -97,6 +95,8 @@ DEFINES +=  "BusCouplerAlias=0" \
             "AnaInPos=1" \
             "DigOutAlias=0" \
             "DigOutPos=2"
+
+
 
 
 
