@@ -39,7 +39,6 @@ void HydrometerCorrectionWidget::recalculate()
 
     double t1 = 1.8f * t1c + 32;
     double t2 = 1.8f * t2c + 32;
-    qDebug() << t1;
 
     double SG1 = 1.00130346 - (1.34722124E-4 * t1) + (2.04052596E-6 * pow( t1, 2 )) - (2.32820948E-9 * pow( t1, 3 ));
     double SG2 = 1.00130346 - (1.34722124E-4 * t2) + (2.04052596E-6 * pow( t2, 2 )) - (2.32820948E-9 * pow( t2, 3 ));

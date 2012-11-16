@@ -23,6 +23,7 @@
 #include "iothread.h"
 #include <kplotobject.h>
 #include "mashschedulewidget.h"
+#include "mashschedule.h"
 #include "pwmthread.h"
 #include "regulator.h"
 #include "regulatorsettings.h"
@@ -50,7 +51,9 @@ class QMonsterMash : public QMainWindow
         MashScheduleWidget *msv;
         bool mashRunning;
         bool pumpRunning;
-        MashScheduleWidget::mashEntry_t *mashSchedule;
+
+        MashScheduleWidget::mashEntry_t *tmpmashSchedule;
+        MashSchedule mashSchedule;
         PWMThread *pwm;
         Regulator *reg;
         RegulatorSettings *regSettings;
@@ -65,7 +68,6 @@ class QMonsterMash : public QMainWindow
 
     private slots:
         void updateLblPv();
-        void updateLblSv();
         void incrementMinutes();
         void on_actExit_triggered();
         void on_actBoilTimer_triggered();
