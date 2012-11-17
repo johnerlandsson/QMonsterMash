@@ -26,7 +26,6 @@ SOURCES +=  main.cpp\
             pwmthread.cpp \
             iothread.cpp \
             hydrometercorrectionwidget.cpp \
-            boiltimerwidget.cpp \
             regulator.cpp \
             regulatorsettings.cpp \
     plotdialog.cpp \
@@ -35,13 +34,15 @@ SOURCES +=  main.cpp\
     mashscheduledialog.cpp \
     mashscheduletablemodel.cpp \
     doublespinboxdelegate.cpp \
-    spinboxdelegate.cpp
+    spinboxdelegate.cpp \
+    boiltimerdialog.cpp \
+    boilscheduletablemodel.cpp \
+    boilschedule.cpp
 
 HEADERS  += qmonstermash.h \
             pwmthread.h \
             iothread.h \
             hydrometercorrectionwidget.h \
-            boiltimerwidget.h \
             regulator.h \
             regulatorsettings.h \
     plotdialog.h \
@@ -50,16 +51,19 @@ HEADERS  += qmonstermash.h \
     mashscheduledialog.h \
     mashscheduletablemodel.h \
     doublespinboxdelegate.h \
-    spinboxdelegate.h
+    spinboxdelegate.h \
+    boiltimerdialog.h \
+    boilscheduletablemodel.h \
+    boilschedule.h
 
 FORMS    += qmonstermash.ui \
             mashschedulewidget.ui \
             hydrometercorrectionwidget.ui \
-            boiltimerwidget.ui \
             regulatorsettings.ui \
     plotdialog.ui \
     plotstatusbar.ui \
-    mashscheduledialog.ui
+    mashscheduledialog.ui \
+    boiltimerdialog.ui
 
 unix:!macx:!symbian: LIBS +=    -lethercat \
                                 -lkdeui \

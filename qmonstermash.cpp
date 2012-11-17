@@ -19,7 +19,7 @@
 #include "ui_qmonstermash.h"
 #include <QDebug>
 #include "hydrometercorrectionwidget.h"
-#include "boiltimerwidget.h"
+#include "boiltimerdialog.h"
 #include <iostream>
 #include "plotdialog.h"
 #include <assert.h>
@@ -202,8 +202,8 @@ void QMonsterMash::incrementMinutes()
 //Tools->Boil timer pressed
 void QMonsterMash::on_actBoilTimer_triggered()
 {
-    BoilTimerWidget *btw = new BoilTimerWidget;
-    btw->show();
+    BoilTimerDialog *btd = new BoilTimerDialog;
+    btd->show();
 }
 
 //File->Mash Schedule pressed
