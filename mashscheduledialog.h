@@ -1,8 +1,7 @@
-#ifndef MASHSCHEDULEDIALOG_H
-#define MASHSCHEDULEDIALOG_H
-
+#ifndef MASHSHEDULEDIALOG_H
+#define MASHSHEDULEDIALOG_H
 #include <QDialog>
-#include "mashscheduletablemodel.h"
+#include "mashschedule.h"
 
 namespace Ui {
     class MashScheduleDialog;
@@ -13,22 +12,18 @@ class MashScheduleDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit MashScheduleDialog( QWidget *parent, MashSchedule ms = MashSchedule() );
+    explicit MashScheduleDialog( QWidget *parent, MashSchedule *ms = NULL );
     ~MashScheduleDialog();
-    MashSchedule getSchedule();
 
 signals:
-    void newSchedule( MashSchedule newSched );
 
 private slots:
-    void resetSchedule();
-
     void on_buttNew_clicked();
+    void on_buttDel_clicked();
 
 private:
     Ui::MashScheduleDialog *ui;
-    MashSchedule ret;
-    MashScheduleTableModel *twMashScheduleModel;
+    MashSchedule *twMashScheduleModel;
 };
 
-#endif // MASHSCHEDULEDIALOG_H
+#endif // MASHSHEDULEDIALOG_H

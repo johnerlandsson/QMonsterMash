@@ -107,3 +107,8 @@ void BoilTimerDialog::on_spnTotalTime_valueChanged(int arg1)
 {
     setRemainingLabel( arg1 * 60 );
 }
+
+void BoilTimerDialog::on_buttDelete_clicked()
+{
+    twBoilScheduleModel->removeRow( ui->twBoilSchedule->currentIndex().row(), QModelIndex() );
+}

@@ -25,7 +25,9 @@ class BoilTimerDialog : public QDialog
 
         void on_spnTotalTime_valueChanged(int arg1);
 
-    private:
+        void on_buttDelete_clicked();
+
+private:
         Ui::BoilTimerDialog *ui;
         BoilSchedule boilSchedule;
         BoilScheduleTableModel *twBoilScheduleModel;

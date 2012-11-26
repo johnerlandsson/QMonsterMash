@@ -43,6 +43,7 @@ class Regulator : public QObject
         
     signals:
         void outputChanged( double newValue );
+        void svChanged( QString newValue );
         
     public slots:
         void updatePI();

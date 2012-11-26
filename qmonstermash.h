@@ -27,6 +27,7 @@
 #include "regulator.h"
 #include "regulatorsettings.h"
 #include "mashschedule.h"
+#include "plotstatusbar.h"
 
 namespace Ui {
     class QMonsterMash;
@@ -51,8 +52,10 @@ class QMonsterMash : public QMainWindow
         bool mashRunning;
         bool pumpRunning;
 
+        PlotStatusBar *psb;
+
         PWMThread *pwm;
-        MashSchedule mashSchedule;
+        MashSchedule *mashSchedule;
         Regulator *reg;
         RegulatorSettings *regSettings;
         void turn_pump_on();
@@ -62,7 +65,6 @@ class QMonsterMash : public QMainWindow
 
     signals:
         void pv_changed( QString newValue );
-        void sv_changed( QString newValue );
 
     private slots:
         void updateLblPv();

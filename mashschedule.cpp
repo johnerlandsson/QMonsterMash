@@ -1,139 +1,255 @@
 #include "mashschedule.h"
 #include <QDebug>
 
-MashSchedule::MashSchedule()
+MashSchedule::MashSchedule( QObject *parent ) : QAbstractTableModel( parent )
 {
-    tempSchedule.append( 35.0f );    //Default acid rest
-    timeSchedule.append( 15 );
-    nameSchedule << "Acid rest";
-
-    tempSchedule.append( 50.0f );    //Default protein rest
-    timeSchedule.append( 15 );
-    nameSchedule << "Protein rest";
-
-    tempSchedule.append( 68.0f );    //Default saccrification rest
-    timeSchedule.append( 60 );
-    nameSchedule << "Saccrification rest";
-
-    tempSchedule.append( 76.0f );    //Default sparge
-    timeSchedule.append( -1 );
-    nameSchedule << "Sparge";
-
-    currentIndex = 0;
+    iterator = 0;
+    setupDefaultSchedule();
 }
 
-void MashSchedule::reset()
+void MashSchedule::setupDefaultSchedule()
 {
-    currentIndex = 0;
-}
+    temps.clear();
+    names.clear();
+    times.clear();
 
-bool MashSchedule::isAtEnd()
-{
-    return currentIndex >= (count() - 1);
+    temps << 35.0f << 50.0f << 68.0f << 78.0f;
+    times << 15 << 15 << 60 << 10;
+    names << "Acid rest" << "Protein rest" << "Saccrification rest" << "Sparge";
 }
 
 bool MashSchedule::next()
 {
     bool ret = false;
 
-    if( currentIndex < (count() - 1) )
+    if( iterator < temps.count() )
     {
-        currentIndex++;
+        iterator++;
         ret = true;
     }
 
     return ret;
 }
 
-int MashSchedule::count()
+int MashSchedule::getCurrentTime()
 {
-    if( timeSchedule.count() != tempSchedule.count() || tempSchedule.count() != nameSchedule.count() )
-    {
-        throw "Mash schedule lists dont match";
-    }
-
-    return tempSchedule.count();
-}
-
-double MashSchedule::getTemp( int index )
-{
-    if( index >= count() )
-        return -1;
-
-    return tempSchedule[index];
+    return times[iterator];
 }
 
 double MashSchedule::getCurrentTemp()
 {
-    return tempSchedule[currentIndex];
-}
-
-int MashSchedule::getTime( int index )
-{
-    if( index >= count() )
-        return -1;
-
-    return timeSchedule[index];
-}
-
-int MashSchedule::getCurrentTime()
-{
-    return timeSchedule[currentIndex];
-}
-
-QString MashSchedule::getName( int index )
-{
-    if( index >= count() )
-        return "";
-
-    return nameSchedule[index];
+    return temps[iterator];
 }
 
 QString MashSchedule::getCurrentName()
 {
-    return nameSchedule[currentIndex];
+    return names[iterator];
 }
 
-void MashSchedule::clear()
+int MashSchedule::getTotalTime()
 {
-    tempSchedule.clear();
-    timeSchedule.clear();
-    nameSchedule.clear();
+    int ret = 0;
+
+    for( int i = 0; i < times.count(); i++ )
+        ret += times[i];
+
+    return ret;
 }
 
-void MashSchedule::addEntry(double temp, int time, QString name)
+void MashSchedule::reset()
 {
-    tempSchedule.append( temp );
-    timeSchedule.append( time );
-    nameSchedule << name;
+    iterator = 0;
+    sort();
 }
 
-bool MashSchedule::setTemp( int index, double value )
+void MashSchedule::sort()
 {
-    if( index >= (count() - 1) )
+    QList<double> tmpTemp;
+    QList<int> tmpTime;
+    QStringList tmpName;
+
+    while( rowCount() > 0 )
+    {
+        int highest = 0;
+
+        for( int i = 0; i < rowCount(); i++ )
+        {
+            if( temps[i] > temps[highest] )
+                highest = i;
+        }
+
+        tmpTemp.prepend( temps[highest] );
+        temps.removeAt( highest );
+        tmpTime.prepend( times[highest] );
+        times.removeAt( highest );
+        tmpName.prepend( names[highest] );
+        names.removeAt( highest );
+    }
+
+    temps= tmpTemp;
+    times = tmpTime;
+    names = tmpName;
+}
+
+int MashSchedule::columnCount( const QModelIndex &/*parent*/ ) const
+{
+    return 3;
+}
+
+int MashSchedule::rowCount( const QModelIndex &/*parent*/ ) const
+{
+    return temps.count();
+}
+
+bool MashSchedule::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if( !index.isValid() )
         return false;
 
-    tempSchedule[index] = value;
+    bool ret = false;
 
-    return true;
+    if( role == Qt::DisplayRole )
+    {
+        qDebug() << "displayRole";
+    }
+    else if( role == Qt::EditRole )
+    {
+        double temp;
+        int time;
+        QString name;
+
+        switch( index.column() )
+        {
+            case 0:
+                temp = value.toDouble();
+
+                if( temp < 0 )
+                    temp = 0;
+                else if( temp > 99 )
+                    temp = 99;
+                temps[index.row()] = temp;
+                emit dataChanged( index, index );
+
+                sort();
+                emit layoutChanged();
+
+                ret = true;
+                break;
+
+            case 1:
+                time = value.toInt();
+                if( time > 999 )
+                    time = 999;
+                else if( time < 1 )
+                    time = 1;
+                times[index.row()] = time;
+                emit dataChanged( index, index );
+                ret = true;
+                break;
+
+            case 2:
+                name = value.toString();
+                if( name.length() < 1 )
+                    name = "Unnamed rest";
+                else if( name.length() > 20 )
+                    name = "Rest with long name";
+                names[index.row()] = name;
+                emit dataChanged( index, index );
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    return ret;
 }
 
-bool MashSchedule::setTime( int index, int value )
+Qt::ItemFlags MashSchedule::flags( const QModelIndex &index ) const
 {
-    if( index >= (count() - 1) )
-        return false;
+    if( !index.isValid() )
+        return 0;
 
-    timeSchedule[index] = value;
-
-    return true;
+    return Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
-bool MashSchedule::setName( int index, QString value )
+QVariant MashSchedule::headerData( int section, Qt::Orientation orientation, int role ) const
 {
-    if( index >= (count() - 1) )
-        return false;
+    if( orientation != Qt::Horizontal )
+        return QVariant();
 
-    nameSchedule[index] = value;
+    if( role != Qt::DisplayRole )
+        return QVariant();
 
-    return true;
+    switch( section )
+    {
+        case 0:
+            return "Temperature";
+            break;
+        case 1:
+            return "Time";
+            break;
+        case 2:
+            return "Name";
+            break;
+        default:
+            return QVariant();
+            break;
+    }
+}
+
+void MashSchedule::appendRow()
+{
+    temps << 60.0f;
+    times << 30;
+    names << "Rest";
+
+    sort();
+
+    emit layoutChanged();
+}
+
+QVariant MashSchedule::data( const QModelIndex &index, int role ) const
+{
+    if( !index.isValid() )
+        return QVariant();
+
+    QVariant ret;
+
+    if( role == Qt::EditRole )
+    {
+        switch( index.column() )
+        {
+            case 0:     //Temp
+                ret = temps[index.row()];
+                break;
+            case 1:     //Time
+                ret = times[index.row()];
+                break;
+            case 2:     //Name
+                ret = names[index.row()];
+                break;
+            default:
+                break;
+        }
+    }
+    else if( role == Qt::DisplayRole )
+    {
+        switch( index.column() )
+        {
+            case 0:
+                ret = QString::number( temps[index.row()], 'f', 2 ) + QString::fromUtf8( "\u00B0" );
+                break;
+            case 1:
+                ret = QString( "%1 min" ).arg( times[index.row()] );
+                break;
+            case 2:
+                ret = names[index.row()];
+                break;
+            default:
+                break;
+        }
+    }
+
+    return ret;
 }

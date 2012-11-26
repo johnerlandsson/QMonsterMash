@@ -1,34 +1,40 @@
 #ifndef MASHSCHEDULE_H
 #define MASHSCHEDULE_H
 
-#include <QList>
+#include <QAbstractTableModel>
 #include <QStringList>
 
-class MashSchedule
+class MashSchedule : public QAbstractTableModel
 {
+    Q_OBJECT
 public:
-    MashSchedule();
-    double getCurrentTemp();
+    explicit MashSchedule( QObject *parent = 0 );
+    QVariant data( const QModelIndex &index, int role ) const;
+    QVariant headerData( int section, Qt::Orientation orientation, int role ) const;
+    bool setData( const QModelIndex &index, const QVariant &value, int role );
+    int rowCount( const QModelIndex &parent = QModelIndex() ) const;
+    void appendRow();
+    int columnCount( const QModelIndex &parent = QModelIndex() ) const;
+    Qt::ItemFlags flags( const QModelIndex &index ) const;
     int getCurrentTime();
+    double getCurrentTemp();
     QString getCurrentName();
     bool next();
-    int count();
+    int getTotalTime();
     void reset();
-    double getTemp( int index );
-    bool setTemp( int index, double value );
-    int getTime( int index );
-    bool setTime( int index, int value );
-    QString getName( int index );
-    bool setName( int index, QString value );
-    void addEntry( double temp, int time, QString name );
-    void clear();
-    bool isAtEnd();
+
+signals:
+
+public slots:
 
 private:
-    QList<double> tempSchedule;
-    QList<int> timeSchedule;
-    QStringList nameSchedule;
-    int currentIndex;
+    QList<int> times;
+    QList<double> temps;
+    QStringList names;
+    int iterator;
+    void sort();
+    void setupDefaultSchedule();
+
 };
 
 #endif // MASHSCHEDULE_H

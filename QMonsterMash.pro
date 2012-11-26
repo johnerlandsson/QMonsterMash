@@ -30,14 +30,13 @@ SOURCES +=  main.cpp\
             regulatorsettings.cpp \
     plotdialog.cpp \
     plotstatusbar.cpp \
-    mashschedule.cpp \
     mashscheduledialog.cpp \
-    mashscheduletablemodel.cpp \
     doublespinboxdelegate.cpp \
     spinboxdelegate.cpp \
     boiltimerdialog.cpp \
     boilscheduletablemodel.cpp \
-    boilschedule.cpp
+    boilschedule.cpp \
+    mashschedule.cpp
 
 HEADERS  += qmonstermash.h \
             pwmthread.h \
@@ -48,16 +47,14 @@ HEADERS  += qmonstermash.h \
     plotdialog.h \
     plotstatusbar.h \
     mashschedule.h \
-    mashscheduledialog.h \
-    mashscheduletablemodel.h \
     doublespinboxdelegate.h \
     spinboxdelegate.h \
     boiltimerdialog.h \
     boilscheduletablemodel.h \
-    boilschedule.h
+    boilschedule.h \
+    mashscheduledialog.h
 
 FORMS    += qmonstermash.ui \
-            mashschedulewidget.ui \
             hydrometercorrectionwidget.ui \
             regulatorsettings.ui \
     plotdialog.ui \
@@ -99,6 +96,23 @@ DEFINES +=  "BusCouplerAlias=0" \
             "AnaInPos=1" \
             "DigOutAlias=0" \
             "DigOutPos=2"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

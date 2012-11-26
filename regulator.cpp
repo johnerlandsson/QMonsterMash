@@ -51,7 +51,7 @@ void Regulator::updatePI()
 
     emit outputChanged( output );
 
-    qDebug() << IState << " " << iTerm << " " << pTerm << " " << output;
+    //qDebug() << IState << " " << iTerm << " " << pTerm << " " << output;
 }
 
 //Start regulator
@@ -76,6 +76,7 @@ void Regulator::stop()
 void Regulator::setSv(double newValue)
 {
         sv = newValue;
+        emit svChanged( QString::number( newValue, 'f', 2 ) + QString::fromUtf8( "\u00B0" ) );
 }
 
 //Save new processvalue

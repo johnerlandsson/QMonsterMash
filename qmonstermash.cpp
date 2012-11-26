@@ -35,7 +35,7 @@ QMonsterMash::QMonsterMash( QWidget *parent ) :
     ui->setupUi( this );
     ui->actMash->setEnabled( false );
 
-    PlotStatusBar *psb = new PlotStatusBar;
+    psb = new PlotStatusBar;
     connect( this, SIGNAL( pv_changed( QString ) ) , psb, SLOT( setPv( QString ) ) );
     ui->statusBar->insertPermanentWidget( 0, psb, 1 );
 
@@ -50,7 +50,6 @@ QMonsterMash::QMonsterMash( QWidget *parent ) :
     //Se up timer to update gui
     tmrUpdateGUI = new QTimer;
     connect( tmrUpdateGUI, SIGNAL( timeout() ), this, SLOT( updateLblPv() ) );
-    connect( this, SIGNAL( sv_changed( QString ) ), psb, SLOT( setSv( QString ) ) );
     tmrUpdateGUI->start( 200 );
 
     //Set up the plot widget
@@ -87,7 +86,11 @@ QMonsterMash::QMonsterMash( QWidget *parent ) :
     reg->setParameters( regSettings->getParameters() );
     connect( reg, SIGNAL( outputChanged( double ) ), pwm, SLOT( setValue( double ) ) );
     connect( regSettings, SIGNAL( parametersChanged( RegulatorSettings::reg_para_t ) ), reg, SLOT( setParameters( RegulatorSettings::reg_para_t ) ) );
+    connect( reg, SIGNAL( svChanged( QString ) ), psb, SLOT( setSv( QString ) ) );
     pwm->setCycleTime( regSettings->getParameters().pwmCycleTime );
+
+    //Mash schedule
+    mashSchedule = new MashSchedule;
 
     //Set up other variables
     mashRunning = false;
@@ -108,10 +111,7 @@ QMonsterMash::~QMonsterMash()
     ec->stop();
     ec->wait();
 
-
     delete ui;
-
-
 }
 
 //File->Exit pressed
@@ -133,7 +133,7 @@ void QMonsterMash::updateLblPv()
 void QMonsterMash::incrementMinutes()
 {
     double pv = ec->getAnalogInput1();
-    double sv = mashSchedule.getCurrentTemp();
+    double sv = mashSchedule->getCurrentTemp();
 
     //Make shure that start mashing has been pressed
     if( !mashRunning )
@@ -141,9 +141,8 @@ void QMonsterMash::incrementMinutes()
 
     static int minutesAtSv = 0;
     static bool flagSet = false;
-    if( minutes == 0 )
+    if( minutes == 0 ) //Initial values
     {
-        reg->setSv( sv );
         minutesAtSv = 0;
         flagSet = false;
     }
@@ -153,11 +152,12 @@ void QMonsterMash::incrementMinutes()
 
     //TODO pv > sv?
     if( pv > (sv - tolerance) )
+    {
         minutesAtSv++;
-
+        psb->incrementProgress();
+    }
 
     minutes++;
-
 
     //Expand the x axis of the plot
     if( minutes > 10 )
@@ -167,7 +167,7 @@ void QMonsterMash::incrementMinutes()
     if( !flagSet && pv >= sv )
     {
         flagSet = true;
-        plotObjects[1]->addPoint( minutes, pv, QString( "%1" ).arg( mashSchedule.getCurrentName() ), 1 );
+        plotObjects[1]->addPoint( minutes, pv, QString( "%1" ).arg( mashSchedule->getCurrentName() ), 1 );
     }
     else
     {
@@ -180,9 +180,9 @@ void QMonsterMash::incrementMinutes()
 
     ui->kpPV->update();
 
-    if( minutesAtSv >= mashSchedule.getCurrentTime() ) //This part switches mash entries
+    if( minutesAtSv >= mashSchedule->getCurrentTime() ) //This part switches mash entries
     {
-        if( mashSchedule.isAtEnd() )
+        if( !mashSchedule->next() )
         {
             turn_mash_off();
             QMessageBox::information( this, tr( "Done" ), tr( "Mashing complete..." ) );
@@ -192,10 +192,7 @@ void QMonsterMash::incrementMinutes()
         minutesAtSv = 0;
         flagSet = false;
 
-        mashSchedule.next();
-        reg->setSv( mashSchedule.getCurrentTemp() );
-
-        emit sv_changed( QString::number( mashSchedule.getCurrentTemp(), 'f', 1 ) + QString::fromUtf8( "\u00B0" ) );
+        reg->setSv( mashSchedule->getCurrentTemp() );
     }
 }
 
@@ -209,9 +206,8 @@ void QMonsterMash::on_actBoilTimer_triggered()
 //File->Mash Schedule pressed
 void QMonsterMash::on_actMashSchedule_triggered()
 {
-    MashScheduleDialog *msd = new MashScheduleDialog( this );
+    MashScheduleDialog *msd = new MashScheduleDialog( this, mashSchedule );
     msd->exec();
-    mashSchedule = msd->getSchedule();
 }
 
 //Tools->Hydrometer Correction pressed
@@ -259,10 +255,8 @@ void QMonsterMash::turn_mash_on()
     ui->actPlotStepResponse->setEnabled( false );
     ui->actMash->setIcon( QIcon( ":/images/stopMashIcon" ) );
     ui->actMash->setText( tr( "Stop mash" ) );
-    //ui->statusBar->showMessage( tr( "Mash running: ") + "00:00" );
 
-    reg->setSv( mashSchedule.getCurrentTemp() );
-    emit sv_changed( QString::number( mashSchedule.getCurrentTemp(), 'f', 1 ) + QString::fromUtf8( "\u00B0" ) );
+    psb->setTotalTime( mashSchedule->getTotalTime() );
 
     //Reset the plot widget
     ui->kpPV->setLimits( 0, 10, 0, 80 );
@@ -281,7 +275,11 @@ void QMonsterMash::turn_mash_on()
     reg->start();
 
     //Reset index counter to 0
-    mashSchedule.reset();
+    mashSchedule->reset();
+    reg->setSv( mashSchedule->getCurrentTemp() );
+
+    //Set maximum value for progressbar
+
 }
 
 //Helper function to set gui and regulator in accordance with mashing being off
