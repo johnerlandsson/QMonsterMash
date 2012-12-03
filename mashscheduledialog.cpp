@@ -12,6 +12,7 @@ MashScheduleDialog::MashScheduleDialog( QWidget *parent, MashSchedule *ms ) :
     ui->twMashSchedule->setModel( twMashScheduleModel );
     DoubleSpinBoxDelegate *dspnd = new DoubleSpinBoxDelegate;
     ui->twMashSchedule->setItemDelegateForColumn( 0, dspnd );
+    ui->twMashSchedule->horizontalHeader()->setResizeMode( QHeaderView::Stretch );
 }
 
 MashScheduleDialog::~MashScheduleDialog()

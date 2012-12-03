@@ -12,9 +12,8 @@ BoilTimerDialog::BoilTimerDialog(QWidget *parent) :
     secTimer = new QTimer;
     connect( secTimer, SIGNAL( timeout() ), this, SLOT( countdown() ) );
 
-    twBoilScheduleModel = new BoilScheduleTableModel;
-    twBoilScheduleModel->setSortRole( Qt::EditRole );
-    ui->twBoilSchedule->setModel( twBoilScheduleModel );
+    boilSchedule = new BoilSchedule;
+    ui->twBoilSchedule->setModel( boilSchedule );
 
     ui->twBoilSchedule->horizontalHeader()->setResizeMode( QHeaderView::Stretch );
 
@@ -34,8 +33,6 @@ void BoilTimerDialog::on_buttStart_clicked()
 
     secoundsRemaining = ui->spnTotalTime->value() * 60;
     secTimer->start( 1000 );
-
-    boilSchedule = twBoilScheduleModel->getSchedule();
 }
 
 void BoilTimerDialog::on_buttStop_clicked()
@@ -58,13 +55,13 @@ void BoilTimerDialog::countdown()
     setRemainingLabel( secoundsRemaining - 1 );
 
     int nextSec = 0;
-    for( int i = 0; i < boilSchedule.count(); i++ )
+    for( int i = 0; i < boilSchedule->rowCount(); i++ )
     {
-        int addSec = boilSchedule.getTime( i ) * 60;
+        int addSec = boilSchedule->getTime( i ) * 60;
 
         if( secoundsRemaining == addSec )
         {
-            QMessageBox *info = new QMessageBox( QMessageBox::Information, tr( "Addition" ), tr( "Please add " ) + boilSchedule.getName( i ) + tr( " now." ) );
+            QMessageBox *info = new QMessageBox( QMessageBox::Information, tr( "Addition" ), tr( "Please add " ) + boilSchedule->getName( i ) + tr( " now." ) );
             info->show();
         }
 
@@ -110,5 +107,9 @@ void BoilTimerDialog::on_spnTotalTime_valueChanged(int arg1)
 
 void BoilTimerDialog::on_buttDelete_clicked()
 {
-    twBoilScheduleModel->removeRow( ui->twBoilSchedule->currentIndex().row(), QModelIndex() );
+}
+
+void BoilTimerDialog::on_buttAdd_clicked()
+{
+    boilSchedule->appendRow( 0, 1, "New" );
 }

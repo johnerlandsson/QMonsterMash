@@ -2,7 +2,7 @@
 #define BOILTIMERDIALOG_H
 
 #include <QDialog>
-#include "boilscheduletablemodel.h"
+#include "boilschedule.h"
 #include <QTimer>
 
 namespace Ui {
@@ -20,17 +20,15 @@ class BoilTimerDialog : public QDialog
     private slots:
         void on_buttStart_clicked();
         void countdown();
-
         void on_buttStop_clicked();
-
         void on_spnTotalTime_valueChanged(int arg1);
-
         void on_buttDelete_clicked();
+
+        void on_buttAdd_clicked();
 
 private:
         Ui::BoilTimerDialog *ui;
-        BoilSchedule boilSchedule;
-        BoilScheduleTableModel *twBoilScheduleModel;
+        BoilSchedule *boilSchedule;
         QTimer *secTimer;
         int secoundsRemaining;
         void setRemainingLabel( int secounds );

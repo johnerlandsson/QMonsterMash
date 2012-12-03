@@ -1,61 +1,230 @@
 #include "boilschedule.h"
 
-BoilSchedule::BoilSchedule()
+BoilSchedule::BoilSchedule( QObject *parent ) :
+    QAbstractTableModel(parent)
 {
-    timeSchedule.append( 60 );
-    nameSchedule.append( "Bittering hops" );
-    timeSchedule.append( 15 );
-    nameSchedule.append( "Flavour hops" );
-    timeSchedule.append( 5 );
-    nameSchedule.append( "Aroma hops" );
+    appendRow( 60, 100, "Magnum" );
+    appendRow( 15, 50, "Amarillo" );
+    appendRow( 5, 50, "Amarillo" );
+    appendRow( 15, 60, "Irish moss" );
+    appendRow( 5, 2, "tsp", "Yeast nutrient" );
+
+    sort();
 }
 
-int BoilSchedule::count()
+QVariant BoilSchedule::data( const QModelIndex &index, int role ) const
 {
-    if( nameSchedule.count() != timeSchedule.count() )
-        return -1;
+    if( !index.isValid() )
+        return QVariant();
 
-    return nameSchedule.count();
+    QVariant ret;
+
+    if( role == Qt::DisplayRole )
+    {
+        switch( index.column() )
+        {
+            case Time:
+                ret = QString( "%1 min" ).arg( times[index.row()] );
+                break;
+
+            case Amount:
+                ret = QString( "%1 %2" ).arg( amounts[index.row()] ).arg( amountUnits[index.row()] );
+                break;
+
+            case Name:
+                ret = names[index.row()];
+                break;
+
+            default:
+                return QVariant();
+                break;
+        }
+    }
+    else if( role == Qt::EditRole )
+    {
+        switch( index.column() )
+        {
+            case Time:
+                ret = times[index.row()];
+                break;
+
+            case Amount:
+                ret = QString( "%1 %2" ).arg( amounts[index.row()] ).arg( amountUnits[index.row()] );
+                break;
+
+            case Name:
+                ret = names[index.row()];
+                break;
+
+            default:
+                return QVariant();
+                break;
+        }
+    }
+
+    return ret;
 }
 
-void BoilSchedule::appendRow( int time, QString name )
+bool BoilSchedule::setData( const QModelIndex &index, const QVariant &value, int role )
 {
-    nameSchedule.append( name );
-    timeSchedule.append( time );
-}
-
-bool BoilSchedule::setName( int index, QString value )
-{
-    if( index >= count() )
+    if( !index.isValid() )
         return false;
 
-    nameSchedule[index] = value;
+    if( role != Qt::EditRole )
+        return false;
 
+    int tmpi = value.toInt();
+    QString tmps = value.toString();
+    QStringList tmpsl = value.toString().split( ' ' );
+
+    switch( index.column() )
+    {
+        case Time:
+            if( tmpi < 0 || tmpi > 999 )
+                return false;
+
+            times[index.row()] = tmpi;
+            sort();
+
+            emit layoutChanged();
+            break;
+
+        case Amount:
+            tmpi = tmpsl.at( 0 ).toInt();
+            if( tmpi < 1 || tmpi > 999 )
+                return false;
+            amounts[index.row()] = tmpi;
+
+            if( tmpsl.count() < 2 )
+                    amountUnits[index.row()] = "g";
+            else
+            {
+                tmps = tmpsl[1];
+                amountUnits[index.row()] = tmps;
+            }
+
+            emit dataChanged( index, index );
+            break;
+
+        case Name:
+            if( tmps.length() == 0 || tmps.length() == MAX_NAME_LENGTH )
+                return false;
+
+            names[index.row()] = tmps;
+
+            emit dataChanged( index, index );
+            break;
+
+        default:
+            return false;
+            break;
+    }
     return true;
 }
 
-bool BoilSchedule::setTime( int index, int value )
+Qt::ItemFlags BoilSchedule::flags( const QModelIndex &index ) const
 {
-    if( index >= count() )
-        return false;
+    if( index.column() >= 0 && index.column() <= 2 )
+        return Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable;
 
-    timeSchedule[index] = value;
-
-    return true;
+    return 0;
 }
 
 int BoilSchedule::getTime( int index )
 {
-    if( index >= count() )
-        throw "BoilSchedule getTime: row out of bounds";
+    if( times.count() <= index )
+        return -1;
 
-    return timeSchedule[index];
+    return times[index];
 }
 
 QString BoilSchedule::getName( int index )
 {
-    if( index >= count() )
-        throw "BoilSchedule getName: row out of bounds";
+    if( names.count() <= index )
+        return QString();
 
-    return nameSchedule[index];
+    return names[index];
+}
+
+int BoilSchedule::columnCount( const QModelIndex &/*parent*/ ) const
+{
+    return 3;
+}
+
+int BoilSchedule::rowCount( const QModelIndex &/*parent*/ ) const
+{
+    return times.count();
+}
+
+void BoilSchedule::appendRow( int time, int amount, QString name )
+{
+    appendRow( time, amount, "g", name );
+}
+
+void BoilSchedule::appendRow( int time, int amount, QString amountUnit, QString name )
+{
+    times.append( time );
+    amounts.append( amount );
+    amountUnits.append( amountUnit );
+    names.append( name );
+
+    emit layoutChanged();
+}
+
+QVariant BoilSchedule::headerData( int section, Qt::Orientation orientation, int role ) const
+{
+    if( orientation != Qt::Horizontal || role != Qt::DisplayRole )
+        return QVariant();
+
+    switch( section )
+    {
+        case Time:
+            return "Time";
+            break;
+
+        case Amount:
+            return "Amount";
+            break;
+
+        case Name:
+            return "Name";
+            break;
+
+        default:
+            return QVariant();
+            break;
+    }
+}
+
+void BoilSchedule::sort()
+{
+    QList<int> tmpTime;
+    QList<int> tmpAmount;
+    QStringList tmpAmountUnit;
+    QStringList tmpName;
+
+    while( rowCount() > 0 )
+    {
+        int highest = 0;
+
+        for( int i = 0; i < rowCount(); i++ )
+        {
+            if( times[i] > times[highest] )
+                highest = i;
+        }
+
+        tmpTime.append( times[highest] );
+        times.removeAt( highest );
+        tmpAmount.append( amounts[highest] );
+        amounts.removeAt( highest );
+        tmpAmountUnit.append( amountUnits[highest] );
+        amountUnits.removeAt( highest );
+        tmpName.append( names[highest] );
+        names.removeAt( highest );
+    }
+
+    times = tmpTime;
+    amounts = tmpAmount;
+    amountUnits = tmpAmountUnit;
+    names = tmpName;
 }
