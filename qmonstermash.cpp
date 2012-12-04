@@ -339,3 +339,8 @@ void QMonsterMash::on_actPlotStepResponse_triggered()
     connect( pd, SIGNAL( stopManual() ), pwm, SLOT( stop() ) );
     pd->show();
 }
+
+void QMonsterMash::on_actVersion_triggered()
+{
+    QMessageBox::information( this, "Version", QString( "QMonsterMash-%1.%2" ).arg( MAJOR_VERSION ).arg( MINOR_VERSION ), QMessageBox::Ok );
+}

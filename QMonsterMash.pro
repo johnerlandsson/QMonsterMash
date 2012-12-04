@@ -20,6 +20,9 @@ QT       += core gui phonon
 TARGET   = QMonsterMash
 TEMPLATE = app
 
+DEFINES +=  "MAJOR_VERSION=0" \
+            "MINOR_VERSION=2"
+
 
 SOURCES +=  main.cpp\
             qmonstermash.cpp \

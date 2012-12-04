@@ -77,6 +77,7 @@ class QMonsterMash : public QMainWindow
         void on_actPlotStepResponse_triggered();
         void on_actPump_triggered();
         void on_actMash_triggered();
+        void on_actVersion_triggered();
 };
 
 #endif // QMONSTERMASH_H

@@ -61,6 +61,7 @@
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="actVersion"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -124,6 +125,11 @@
    </property>
    <property name="text">
     <string>Start pump</string>
+   </property>
+  </action>
+  <action name="actVersion">
+   <property name="text">
+    <string>Version</string>
    </property>
   </action>
  </widget>

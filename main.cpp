@@ -26,6 +26,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName( "QMonsterMash" );
     QCoreApplication::setOrganizationDomain( "www.lunatech.se" );
     QCoreApplication::setOrganizationName( "Lunatech Innovations" );
+    QCoreApplication::setApplicationVersion( QString( "%1.%2" ).arg( MAJOR_VERSION ).arg( MINOR_VERSION ) );
 
     w.showMaximized();
     
