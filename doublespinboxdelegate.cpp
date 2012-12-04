@@ -27,9 +27,9 @@ void DoubleSpinBoxDelegate::setEditorData( QWidget *editor, const QModelIndex &i
 
 void DoubleSpinBoxDelegate::setModelData( QWidget *editor, QAbstractItemModel *model, const QModelIndex &index ) const
 {
-    QSpinBox *spinBox = static_cast<QSpinBox*>(editor);
+    QDoubleSpinBox *spinBox = static_cast<QDoubleSpinBox*>(editor);
     spinBox->interpretText();
-    int value = spinBox->value();
+    double value = spinBox->value();
 
     model->setData( index, value, Qt::EditRole );
 }

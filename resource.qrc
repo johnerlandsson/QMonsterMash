@@ -8,4 +8,7 @@
         <file alias="stopPumpIcon">images/stopPump.png</file>
         <file alias="startPumpIcon">images/startPump.png</file>
     </qresource>
+    <qresource prefix="/text">
+        <file>boilwords.txt</file>
+    </qresource>
 </RCC>

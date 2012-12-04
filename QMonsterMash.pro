@@ -38,7 +38,9 @@ SOURCES +=  main.cpp\
     spinboxdelegate.cpp \
     boiltimerdialog.cpp \
     mashschedule.cpp \
-    boilschedule.cpp
+    boilschedule.cpp \
+    completinglineeditdelegate.cpp \
+    wordfilestringlistmodel.cpp
 
 HEADERS  += qmonstermash.h \
             pwmthread.h \
@@ -53,7 +55,9 @@ HEADERS  += qmonstermash.h \
     spinboxdelegate.h \
     boiltimerdialog.h \
     mashscheduledialog.h \
-    boilschedule.h
+    boilschedule.h \
+    completinglineeditdelegate.h \
+    wordfilestringlistmodel.h
 
 FORMS    += qmonstermash.ui \
             hydrometercorrectionwidget.ui \
@@ -81,7 +85,8 @@ OTHER_FILES +=  README \
     images/startMash.png \
     images/startPump.png \
     images/stopMash.png \
-    images/stopPump.png
+    images/stopPump.png \
+    boilwords.txt
 
 target.path = /opt/QMonsterMash
 INSTALLS += target
@@ -97,6 +102,11 @@ DEFINES +=  "BusCouplerAlias=0" \
             "AnaInPos=1" \
             "DigOutAlias=0" \
             "DigOutPos=2"
+
+
+
+
+
 
 
 

@@ -2,12 +2,11 @@
 #include "ui_boiltimerdialog.h"
 #include <QDebug>
 #include <QMessageBox>
+#include "completinglineeditdelegate.h"
 
-BoilTimerDialog::BoilTimerDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::BoilTimerDialog)
+BoilTimerDialog::BoilTimerDialog( QWidget *parent ) : QDialog( parent ), ui( new Ui::BoilTimerDialog )
 {
-    ui->setupUi(this);
+    ui->setupUi( this );
 
     secTimer = new QTimer;
     connect( secTimer, SIGNAL( timeout() ), this, SLOT( countdown() ) );
@@ -16,6 +15,8 @@ BoilTimerDialog::BoilTimerDialog(QWidget *parent) :
     ui->twBoilSchedule->setModel( boilSchedule );
 
     ui->twBoilSchedule->horizontalHeader()->setResizeMode( QHeaderView::Stretch );
+    CompletingLineEditDelegate *nameDelegate = new CompletingLineEditDelegate( ui->twBoilSchedule, ":/text/boilwords.txt" );
+    ui->twBoilSchedule->setItemDelegateForColumn( 2, nameDelegate );
 
     setRemainingLabel( ui->spnTotalTime->value() * 60 );
     setNextLabel( 0 );
