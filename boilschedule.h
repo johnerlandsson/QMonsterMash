@@ -24,6 +24,7 @@ public:
 
     void appendRow( int time, int amount, QString name );
     void appendRow( int time, int amount, QString amountUnit, QString name );
+    bool removeRow( int row, const QModelIndex &parent = QModelIndex() );
 
 
     enum columns

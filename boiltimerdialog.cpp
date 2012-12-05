@@ -108,6 +108,9 @@ void BoilTimerDialog::on_spnTotalTime_valueChanged(int arg1)
 
 void BoilTimerDialog::on_buttDelete_clicked()
 {
+    int row = ui->twBoilSchedule->currentIndex().row();
+
+    boilSchedule->removeRow( row );
 }
 
 void BoilTimerDialog::on_buttAdd_clicked()

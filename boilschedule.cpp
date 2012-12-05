@@ -171,6 +171,21 @@ void BoilSchedule::appendRow( int time, int amount, QString amountUnit, QString 
     emit layoutChanged();
 }
 
+bool BoilSchedule::removeRow( int row, const QModelIndex &/*parent*/ )
+{
+    if( row < 0 || row >= this->rowCount() )
+        return false;
+
+    times.removeAt( row );
+    names.removeAt( row );
+    amounts.removeAt( row );
+    amountUnits.removeAt( row );
+
+    emit layoutChanged();
+
+    return true;
+}
+
 QVariant BoilSchedule::headerData( int section, Qt::Orientation orientation, int role ) const
 {
     if( orientation != Qt::Horizontal || role != Qt::DisplayRole )
