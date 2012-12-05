@@ -1,3 +1,20 @@
+/*  Copyright (C) 2012 John Erlandsson
+
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+
 #include "mashschedule.h"
 #include <QDebug>
 
@@ -108,11 +125,7 @@ bool MashSchedule::setData(const QModelIndex &index, const QVariant &value, int 
 
     bool ret = false;
 
-    if( role == Qt::DisplayRole )
-    {
-        qDebug() << "displayRole";
-    }
-    else if( role == Qt::EditRole )
+    if( role == Qt::EditRole )
     {
         double temp;
         int time;
@@ -120,7 +133,7 @@ bool MashSchedule::setData(const QModelIndex &index, const QVariant &value, int 
 
         switch( index.column() )
         {
-            case 0:
+            case Temperature:
                 temp = value.toDouble();
 
                 if( temp < 0 )
@@ -136,7 +149,7 @@ bool MashSchedule::setData(const QModelIndex &index, const QVariant &value, int 
                 ret = true;
                 break;
 
-            case 1:
+            case Time:
                 time = value.toInt();
                 if( time > 999 )
                     time = 999;
@@ -147,7 +160,7 @@ bool MashSchedule::setData(const QModelIndex &index, const QVariant &value, int 
                 ret = true;
                 break;
 
-            case 2:
+            case Name:
                 name = value.toString();
                 if( name.length() < 1 )
                     name = "Unnamed rest";
@@ -155,6 +168,7 @@ bool MashSchedule::setData(const QModelIndex &index, const QVariant &value, int 
                     name = "Rest with long name";
                 names[index.row()] = name;
                 emit dataChanged( index, index );
+                ret = true;
                 break;
 
             default:
@@ -183,13 +197,13 @@ QVariant MashSchedule::headerData( int section, Qt::Orientation orientation, int
 
     switch( section )
     {
-        case 0:
+        case Temperature:
             return "Temperature";
             break;
-        case 1:
+        case Time:
             return "Time";
             break;
-        case 2:
+        case Name:
             return "Name";
             break;
         default:
@@ -234,13 +248,13 @@ QVariant MashSchedule::data( const QModelIndex &index, int role ) const
     {
         switch( index.column() )
         {
-            case 0:     //Temp
+            case Temperature:     //Temp
                 ret = temps[index.row()];
                 break;
-            case 1:     //Time
+            case Time:     //Time
                 ret = times[index.row()];
                 break;
-            case 2:     //Name
+            case Name:     //Name
                 ret = names[index.row()];
                 break;
             default:
@@ -251,13 +265,13 @@ QVariant MashSchedule::data( const QModelIndex &index, int role ) const
     {
         switch( index.column() )
         {
-            case 0:
+            case Temperature:
                 ret = QString::number( temps[index.row()], 'f', 2 ) + QString::fromUtf8( "\u00B0" );
                 break;
-            case 1:
+            case Time:
                 ret = QString( "%1 min" ).arg( times[index.row()] );
                 break;
-            case 2:
+            case Name:
                 ret = names[index.row()];
                 break;
             default:

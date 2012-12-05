@@ -10,5 +10,6 @@
     </qresource>
     <qresource prefix="/text">
         <file>boilwords.txt</file>
+        <file>mashwords.txt</file>
     </qresource>
 </RCC>

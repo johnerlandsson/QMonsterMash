@@ -21,8 +21,7 @@ TARGET   = QMonsterMash
 TEMPLATE = app
 
 DEFINES +=  "MAJOR_VERSION=0" \
-            "MINOR_VERSION=2"
-
+            "MINOR_VERSION=3"
 
 SOURCES +=  main.cpp\
             qmonstermash.cpp \
@@ -31,16 +30,16 @@ SOURCES +=  main.cpp\
             hydrometercorrectionwidget.cpp \
             regulator.cpp \
             regulatorsettings.cpp \
-    plotdialog.cpp \
-    plotstatusbar.cpp \
-    mashscheduledialog.cpp \
-    doublespinboxdelegate.cpp \
-    spinboxdelegate.cpp \
-    boiltimerdialog.cpp \
-    mashschedule.cpp \
-    boilschedule.cpp \
-    completinglineeditdelegate.cpp \
-    wordfilestringlistmodel.cpp
+            plotdialog.cpp \
+            plotstatusbar.cpp \
+            mashscheduledialog.cpp \
+            doublespinboxdelegate.cpp \
+            spinboxdelegate.cpp \
+            boiltimerdialog.cpp \
+            mashschedule.cpp \
+            boilschedule.cpp \
+            completinglineeditdelegate.cpp \
+            wordfilestringlistmodel.cpp
 
 HEADERS  += qmonstermash.h \
             pwmthread.h \
@@ -48,24 +47,24 @@ HEADERS  += qmonstermash.h \
             hydrometercorrectionwidget.h \
             regulator.h \
             regulatorsettings.h \
-    plotdialog.h \
-    plotstatusbar.h \
-    mashschedule.h \
-    doublespinboxdelegate.h \
-    spinboxdelegate.h \
-    boiltimerdialog.h \
-    mashscheduledialog.h \
-    boilschedule.h \
-    completinglineeditdelegate.h \
-    wordfilestringlistmodel.h
+            plotdialog.h \
+            plotstatusbar.h \
+            mashschedule.h \
+            doublespinboxdelegate.h \
+            spinboxdelegate.h \
+            boiltimerdialog.h \
+            mashscheduledialog.h \
+            boilschedule.h \
+            completinglineeditdelegate.h \
+            wordfilestringlistmodel.h
 
 FORMS    += qmonstermash.ui \
             hydrometercorrectionwidget.ui \
             regulatorsettings.ui \
-    plotdialog.ui \
-    plotstatusbar.ui \
-    mashscheduledialog.ui \
-    boiltimerdialog.ui
+            plotdialog.ui \
+            plotstatusbar.ui \
+            mashscheduledialog.ui \
+            boiltimerdialog.ui
 
 unix:!macx:!symbian: LIBS +=    -lethercat \
                                 -lkdeui \
@@ -80,13 +79,14 @@ OTHER_FILES +=  README \
                 sounds/air-raid-siren-alert.mp3 \
                 INSTALL \
                 scilab/qmonstermash.sce \
-    images/Mash.svg \
-    images/Pump.svg \
-    images/startMash.png \
-    images/startPump.png \
-    images/stopMash.png \
-    images/stopPump.png \
-    boilwords.txt
+                images/Mash.svg \
+                images/Pump.svg \
+                images/startMash.png \
+                images/startPump.png \
+                images/stopMash.png \
+                images/stopPump.png \
+                boilwords.txt \
+    mashwords.txt
 
 target.path = /opt/QMonsterMash
 INSTALLS += target
@@ -102,6 +102,7 @@ DEFINES +=  "BusCouplerAlias=0" \
             "AnaInPos=1" \
             "DigOutAlias=0" \
             "DigOutPos=2"
+
 
 
 
