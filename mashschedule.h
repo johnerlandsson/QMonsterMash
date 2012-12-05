@@ -14,6 +14,7 @@ public:
     bool setData( const QModelIndex &index, const QVariant &value, int role );
     int rowCount( const QModelIndex &parent = QModelIndex() ) const;
     void appendRow();
+    bool removeRow( int row, const QModelIndex &parent = QModelIndex() );
     int columnCount( const QModelIndex &parent = QModelIndex() ) const;
     Qt::ItemFlags flags( const QModelIndex &index ) const;
     int getCurrentTime();

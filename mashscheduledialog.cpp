@@ -27,5 +27,7 @@ void MashScheduleDialog::on_buttNew_clicked()
 
 void MashScheduleDialog::on_buttDel_clicked()
 {
-    twMashScheduleModel->removeRow( ui->twMashSchedule->currentIndex().row(), QModelIndex() );
+    int row = ui->twMashSchedule->currentIndex().row();
+
+    twMashScheduleModel->removeRow( row );
 }

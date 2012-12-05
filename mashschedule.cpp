@@ -209,6 +209,20 @@ void MashSchedule::appendRow()
     emit layoutChanged();
 }
 
+bool MashSchedule::removeRow( int row, const QModelIndex &/*parent*/ )
+{
+    if( row < 0 || row >= rowCount() )
+        return false;
+
+    times.removeAt( row );
+    temps.removeAt( row );
+    names.removeAt( row );
+
+    emit layoutChanged();
+
+    return true;
+}
+
 QVariant MashSchedule::data( const QModelIndex &index, int role ) const
 {
     if( !index.isValid() )
