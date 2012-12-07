@@ -21,6 +21,8 @@
 #include "doublespinboxdelegate.h"
 #include "wordfilestringlistmodel.h"
 #include "completinglineeditdelegate.h"
+#include "spinboxdelegate.h"
+#include "doublespinboxdelegate.h"
 
 MashScheduleDialog::MashScheduleDialog( QWidget *parent, MashSchedule *ms ) :
     QDialog( parent ), ui( new Ui::MashScheduleDialog )
@@ -36,6 +38,13 @@ MashScheduleDialog::MashScheduleDialog( QWidget *parent, MashSchedule *ms ) :
     WordfileStringListModel *nameDelegateModel = new WordfileStringListModel( NULL, ":text/mashwords.txt" );
     CompletingLineEditDelegate *nameDelegate = new CompletingLineEditDelegate( twMashScheduleModel, nameDelegateModel );
     ui->twMashSchedule->setItemDelegateForColumn( MashSchedule::Name, nameDelegate );
+
+    SpinBoxDelegate *timeDelegate = new SpinBoxDelegate;
+    ui->twMashSchedule->setItemDelegateForColumn( MashSchedule::Time, timeDelegate );
+    DoubleSpinBoxDelegate *tempDelegate = new DoubleSpinBoxDelegate;
+    tempDelegate->setMaxValue( 80.0f );
+    tempDelegate->setMinValue( 10 );
+    ui->twMashSchedule->setItemDelegateForColumn( MashSchedule::Temperature, tempDelegate );
 }
 
 MashScheduleDialog::~MashScheduleDialog()

@@ -37,6 +37,10 @@ signals:
 
 public slots:
 
+private:
+    double maxVal;
+    double minVal;
+
 };
 
 #endif // DOUBLESPINBOXDELEGATE_H

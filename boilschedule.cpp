@@ -203,6 +203,7 @@ bool BoilSchedule::removeRow( int row, const QModelIndex &/*parent*/ )
     return true;
 }
 
+//Set the header for the widget that will hold this model
 QVariant BoilSchedule::headerData( int section, Qt::Orientation orientation, int role ) const
 {
     if( orientation != Qt::Horizontal || role != Qt::DisplayRole )
@@ -228,6 +229,7 @@ QVariant BoilSchedule::headerData( int section, Qt::Orientation orientation, int
     }
 }
 
+//Sort the lists by temperature column
 void BoilSchedule::sort()
 {
     QList<int> tmpTime;

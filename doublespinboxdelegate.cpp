@@ -26,8 +26,8 @@ DoubleSpinBoxDelegate::DoubleSpinBoxDelegate(QObject *parent) :
 QWidget *DoubleSpinBoxDelegate::createEditor( QWidget *parent, const QStyleOptionViewItem &/* option */, const QModelIndex &/* index */ ) const
 {
     QDoubleSpinBox *editor = new QDoubleSpinBox( parent );
-    editor->setMinimum( 20.0f );
-    editor->setMaximum( 80.0f );
+    editor->setMinimum( minVal );
+    editor->setMaximum( maxVal );
     editor->setDecimals( 2 );
     editor->setSuffix( QString::fromUtf8( "\u00B0" ) );
 
@@ -54,4 +54,14 @@ void DoubleSpinBoxDelegate::setModelData( QWidget *editor, QAbstractItemModel *m
 void DoubleSpinBoxDelegate::updateEditorGeometry( QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &/* index */ ) const
 {
     editor->setGeometry( option.rect );
+}
+
+void DoubleSpinBoxDelegate::setMaxValue(double max)
+{
+    maxVal = max;
+}
+
+void DoubleSpinBoxDelegate::setMinValue(double min)
+{
+    minVal = min;
 }

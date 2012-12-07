@@ -21,6 +21,7 @@
 #include <QMessageBox>
 #include "completinglineeditdelegate.h"
 #include "wordfilestringlistmodel.h"
+#include "spinboxdelegate.h"
 
 BoilTimerDialog::BoilTimerDialog( QWidget *parent ) : QDialog( parent ), ui( new Ui::BoilTimerDialog )
 {
@@ -36,6 +37,9 @@ BoilTimerDialog::BoilTimerDialog( QWidget *parent ) : QDialog( parent ), ui( new
     WordfileStringListModel *nameDelegateModel = new WordfileStringListModel( NULL, ":text/boilwords.txt" );
     CompletingLineEditDelegate *nameDelegate = new CompletingLineEditDelegate( ui->twBoilSchedule, nameDelegateModel );
     ui->twBoilSchedule->setItemDelegateForColumn( BoilSchedule::Name, nameDelegate );
+
+    SpinBoxDelegate *timeDelegate = new SpinBoxDelegate;
+    ui->twBoilSchedule->setItemDelegateForColumn( BoilSchedule::Time, timeDelegate );
 
     setRemainingLabel( ui->spnTotalTime->value() * 60 );
     setNextLabel( 0 );
