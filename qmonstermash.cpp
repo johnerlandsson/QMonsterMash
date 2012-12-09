@@ -26,6 +26,7 @@
 #include "plotstatusbar.h"
 #include "mashscheduledialog.h"
 #include <QMessageBox>
+#include "dilutioncalcdialog.h"
 
 QMonsterMash::QMonsterMash( QWidget *parent ) :
     QMainWindow( parent ),
@@ -343,4 +344,10 @@ void QMonsterMash::on_actPlotStepResponse_triggered()
 void QMonsterMash::on_actVersion_triggered()
 {
     QMessageBox::information( this, "Version", QString( "QMonsterMash-%1.%2" ).arg( MAJOR_VERSION ).arg( MINOR_VERSION ), QMessageBox::Ok );
+}
+
+void QMonsterMash::on_actDilCalc_triggered()
+{
+    DilutionCalcDialog *dcd = new DilutionCalcDialog;
+    dcd->show();
 }

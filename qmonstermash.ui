@@ -30,7 +30,7 @@
      <x>0</x>
      <y>0</y>
      <width>1104</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -50,6 +50,7 @@
     <addaction name="actBoilTimer"/>
     <addaction name="actHydrometerCorrection"/>
     <addaction name="actPlotStepResponse"/>
+    <addaction name="actDilCalc"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -130,6 +131,11 @@
   <action name="actVersion">
    <property name="text">
     <string>Version</string>
+   </property>
+  </action>
+  <action name="actDilCalc">
+   <property name="text">
+    <string>Dilution calculator</string>
    </property>
   </action>
  </widget>

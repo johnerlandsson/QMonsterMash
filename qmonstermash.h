@@ -78,6 +78,7 @@ class QMonsterMash : public QMainWindow
         void on_actPump_triggered();
         void on_actMash_triggered();
         void on_actVersion_triggered();
+        void on_actDilCalc_triggered();
 };
 
 #endif // QMONSTERMASH_H

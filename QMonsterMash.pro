@@ -39,7 +39,8 @@ SOURCES +=  main.cpp\
             mashschedule.cpp \
             boilschedule.cpp \
             completinglineeditdelegate.cpp \
-            wordfilestringlistmodel.cpp
+            wordfilestringlistmodel.cpp \
+    dilutioncalcdialog.cpp
 
 HEADERS  += qmonstermash.h \
             pwmthread.h \
@@ -56,7 +57,8 @@ HEADERS  += qmonstermash.h \
             mashscheduledialog.h \
             boilschedule.h \
             completinglineeditdelegate.h \
-            wordfilestringlistmodel.h
+            wordfilestringlistmodel.h \
+    dilutioncalcdialog.h
 
 FORMS    += qmonstermash.ui \
             hydrometercorrectionwidget.ui \
@@ -64,7 +66,8 @@ FORMS    += qmonstermash.ui \
             plotdialog.ui \
             plotstatusbar.ui \
             mashscheduledialog.ui \
-            boiltimerdialog.ui
+            boiltimerdialog.ui \
+    dilutioncalcdialog.ui
 
 unix:!macx:!symbian: LIBS +=    -lethercat \
                                 -lkdeui \
